@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V4 | CVC Dashboard (Final)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #0a0a0a; 
+            --bg-secondary: #141414; 
+            --bg-tertiary: #1f1f1f; 
+            --text-bright: #ffffff;
+            --text-muted: #8c8c8c;
+            --v4-neon-red: #ff1f2d; 
+            --v4-dark-red: #a30009;
+            --cvc-neon-yellow: #ffd700;
+            --status-green: #00c853;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-main);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+            background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%);
+        }
+
+        .login-box {
+            background: var(--bg-secondary); padding: 40px; border-radius: 24px;
+            width: 450px; text-align: center; border: 1px solid #2a2a2a;
+            box-shadow: 0 0 40px rgba(255, 31, 45, 0.15);
+            display: flex; flex-direction: column; align-items: center; 
+        }
+
+        .login-logo { width: 80px; margin-bottom: 25px; filter: drop-shadow(0 0 10px var(--v4-neon-red)); }
+
+        .login-input {
+            width: 100%; padding: 15px; margin-bottom: 20px;
+            background: var(--bg-main); border: 1px solid #333; border-radius: 12px;
+            color: var(--text-bright); font-family: inherit; outline: none; transition: 0.3s;
+        }
+        .login-input:focus { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.3); }
+
+        .login-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red));
+            color: white; border: none; border-radius: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
+
+        /* --- DASHBOARD --- */
+        #dashboard-container { display: none; height: 100vh; }
+        .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
+        
+        .brand { display: flex; align-items: center; margin-bottom: 50px; gap: 15px; }
+        
+        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+        .nav-item.active { background: rgba(255, 31, 45, 0.1); color: var(--v4-neon-red); box-shadow: inset 3px 0 0 var(--v4-neon-red); }
+
+        .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
+
+        .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;}
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
+        .header p { color: var(--text-muted); font-size: 0.9rem;}
+
+        /* --- CARDS & GRID --- */
+        .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
+        .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
+        .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 1px; }
+
+        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12{ grid-column: span 12;}
+
+        .dashboard-section { display: none; animation: fadeIn 0.4s ease; }
+        .active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MAPA --- */
+        .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
+        .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
+        .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+        
+        .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
+        .leaflet-popup-tip { background: #141414; }
+        
+        /* --- CENTRALIZAÇÃO DO TEXTO NO GRÁFICO --- */
+        .chart-wrapper {
+            position: relative;
+            height: 220px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .chart-center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="80" style="margin-bottom:20px;">
+            <h2 style="margin-bottom: 10px; font-size: 1.5rem; color: white;">V4 PLACERES&CO - CVC</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">Acesso Restrito - Franchise Intelligence</p>
+            <input type="text" class="login-input" placeholder="ID do Usuário" value="cvc.admin">
+            <input type="password" class="login-input" placeholder="Senha de Acesso" value="********">
+            <button class="login-btn" onclick="enterDashboard()">Entrar</button>
+        </div>
+    </div>
+
+    <div id="dashboard-container">
+        
+        <aside class="sidebar">
+            <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
+                <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="80" style="margin-bottom:20px;">
+                <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
+            </div>
+
+            <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase;">Analytics</div>
+            
+            <div id="btn-overview" class="nav-item active" onclick="switchTab('section-overview', 'btn-overview')">Overview Geral</div>
+            <div id="btn-leads" class="nav-item" onclick="switchTab('section-leads', 'btn-leads')">Performance de Leads</div>
+            <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
+            <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
+
+            <div class="user-profile">
+                <img src="data:image/webp;base64,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" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
+                <div>
+                    <div style="font-weight: 600; font-size: 0.9rem;">Admin CVC</div>
+                    <div style="color: var(--text-muted); font-size: 0.75rem;">Gestão</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <div id="section-overview" class="dashboard-section active-section">
+                <div class="header">
+                    <h1>Visão Geral de Expansão</h1>
+                    <p>Dados consolidados: JANEIRO 2026</p>
+                </div>
+
+                <div class="grid">
+                    <div class="card span-4">
+                        <span class="card-title">LEADS (BANT4)</span>
+                        <div class="chart-wrapper">
+                            <canvas id="chartQualidade"></canvas>
+                            <div class="chart-center-text">
+                                <div style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">19</div>
+                                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card span-8">
+                        <span class="card-title">Top 5 Cidades (Vol. Leads)</span>
+                        <div style="height: 220px;">
+                            <canvas id="chartCidades"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-4 yellow-accent">
+                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
+                        <div style="height: 200px;">
+                            <canvas id="chartReuniao"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-8">
+                        <span class="card-title">STATUS DO FUNIL (Detalhado)</span>
+                        <div style="height: 200px;">
+                            <canvas id="chartLive"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-leads" class="dashboard-section">
+                <div class="header">
+                    <h1>Performance de Leads</h1>
+                    <p>Evolução diária de novos cadastros.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span>
+                        <div style="height: 400px;">
+                            <canvas id="chartLeadsTimeline"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-geo" class="dashboard-section">
+                <div class="header">
+                    <h1>Expansão Geográfica</h1>
+                    <p>Mapeamento das principais praças de interesse.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span class="card-title" style="margin:0;">Mapa Interativo</span>
+                            <div style="display: flex; gap: 15px; font-size: 0.75rem;">
+                                <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px; height:10px; background: #ff1f2d; border-radius:50%;"></span> Lead Ativo</span>
+                            </div>
+                        </div>
+                        <div id="map" class="map-container"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="section-lives" class="dashboard-section">
+                <div class="header">
+                    <h1>Relatório de Lives</h1>
+                    <p>Cadastros para a Live por dia.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span>
+                        <div style="height: 400px;">
+                            <canvas id="chartLivesTimeline"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- 1. LÓGICA DE LOGIN & NAVEGAÇÃO ---
+        function enterDashboard() {
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'flex';
+                initCharts(); 
+                setTimeout(initMap, 200); 
+            }, 500);
+        }
+
+        function switchTab(targetId, btnId) {
+            document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active-section'));
+            
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                targetSection.classList.add('active-section');
+            }
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeBtn = document.getElementById(btnId);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if(targetId === 'section-geo') setTimeout(() => { map.invalidateSize(); }, 200);
+        }
+
+        // --- 2. MAPA ---
+        var map;
+        function initMap() {
+            if(map) return;
+            map = L.map('map').setView([-14.2350, -51.9253], 4);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map);
+
+            var pinIcon = L.divIcon({ className: 'custom-pin', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -28] });
+
+            const cities = [
+                {n: "São Paulo", lat: -23.5505, lng: -46.6333, q: 20},
+                {n: "Fortaleza", lat: -3.7172, lng: -38.5434, q: 3},
+                {n: "Belo Horizonte", lat: -19.9167, lng: -43.9345, q: 3},
+                {n: "Campo Grande", lat: -20.4697, lng: -54.6201, q: 3},
+                {n: "S. José dos Campos", lat: -23.2237, lng: -45.9009, q: 2},
+                {n: "Rio de Janeiro", lat: -22.9068, lng: -43.1729, q: 1},
+                {n: "Salvador", lat: -12.9777, lng: -38.5016, q: 1},
+                {n: "Brasília", lat: -15.7975, lng: -47.8919, q: 1},
+                {n: "Curitiba", lat: -25.4284, lng: -49.2733, q: 1},
+                {n: "Recife", lat: -8.0476, lng: -34.8770, q: 1},
+                {n: "Porto Alegre", lat: -30.0346, lng: -51.2177, q: 1}
+            ];
+
+            cities.forEach(c => {
+                L.marker([c.lat, c.lng], {icon: pinIcon}).addTo(map).bindPopup(`<b>${c.n}</b><br>${c.q} Leads`);
+            });
+        }
+
+        // --- 3. GRÁFICOS ---
+        function initCharts() {
+            Chart.defaults.color = '#8c8c8c';
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+            // OVERVIEW - AJUSTADO PARA 19 LEADS
+            new Chart(document.getElementById('chartQualidade'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['BANT4', 'Não qualificados'],
+                    datasets: [{ 
+                        data: [19, 192], // 19 qualificados de um total fictício para manter a proporção visual
+                        backgroundColor: ['#ff1f2d', '#1f1f1f'], 
+                        borderWidth: 0, 
+                        borderRadius: 4 
+                    }]
+                },
+                options: { cutout: '85%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
+            });
+
+            const ctxCidades = document.getElementById('chartCidades').getContext('2d');
+            const gradient = ctxCidades.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, '#ff1f2d'); gradient.addColorStop(1, '#600000');
+            new Chart(ctxCidades, {
+                type: 'bar',
+                data: {
+                    labels: ['SP', 'Fortaleza', 'BH', 'Campo Grande', 'SJC'],
+                    datasets: [{ label: 'Volume', data: [20, 3, 3, 3, 2], backgroundColor: gradient, borderRadius: 6, barThickness: 25 }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
+            });
+
+            new Chart(document.getElementById('chartReuniao'), {
+                type: 'pie',
+                data: {
+                    labels: ['Presente', 'Sem Resposta', 'Ausente'],
+                    datasets: [{ data: [8, 101, 12], backgroundColor: ['#00c853', '#333333', '#d32f2f'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true } } } }
+            });
+
+            new Chart(document.getElementById('chartLive'), {
+                type: 'bar',
+                indexAxis: 'y',
+                data: {
+                    labels: ['SEM RESPOSTA', 'CONTATADO', 'BANT4', 'PARTICIPOU'],
+                    datasets: [{
+                        label: 'Leads', data: [79, 22, 12, 1],
+                        backgroundColor: (ctx) => {
+                             const l = ctx.chart.data.labels[ctx.dataIndex];
+                             if(l === 'PARTICIPOU' || l === 'BANT4') return '#00c853';
+                             if(l === 'CONTATADO') return '#ffd700';
+                             return '#ff1f2d';
+                        },
+                        borderRadius: 4, barThickness: 15
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { display: false } } } }
+            });
+
+            // PERFORMANCE DE LEADS
+            new Chart(document.getElementById('chartLeadsTimeline'), {
+                type: 'line',
+                data: {
+                    labels: ['02/jan', '03/jan', '04/jan', '05/jan', '06/jan', '07/jan', '08/jan', '09/jan', '10/jan'],
+                    datasets: [{
+                        label: 'Novos Leads',
+                        data: [14, 10, 12, 21, 10, 8, 9, 8, 10], 
+                        borderColor: '#ff1f2d',
+                        backgroundColor: 'rgba(255, 31, 45, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ff1f2d'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } }
+                }
+            });
+
+            // RELATÓRIO DE LIVES
+            new Chart(document.getElementById('chartLivesTimeline'), {
+                type: 'line',
+                data: {
+                    labels: ['02/jan', '03/jan', '04/jan', '05/jan', '06/jan', '07/jan', '08/jan', '09/jan', '10/jan'],
+                    datasets: [{
+                        label: 'Cadastros para Live',
+                        data: [14, 10, 12, 21, 10, 8, 9, 8, 10], 
+                        borderColor: '#ffd700', 
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ffd700'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

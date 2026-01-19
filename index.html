@@ -42,7 +42,25 @@
 
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
-        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); position: relative; }
+        
+        /* FILTRO FLUTUANTE (FIXO NO TOPO DIREITO) */
+        .top-right-filter { position: absolute; top: 35px; right: 40px; z-index: 1000; }
+        .month-selector {
+            background: var(--bg-secondary);
+            color: white;
+            border: 1px solid #333;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: 0.3s;
+        }
+        .month-selector:hover { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.2); }
+
         .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
         .nav-item.active { background: rgba(255, 31, 45, 0.1); color: var(--v4-neon-red); box-shadow: inset 3px 0 0 var(--v4-neon-red); }
@@ -55,7 +73,6 @@
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
         .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; letter-spacing: 1px; }
         
-        /* Novos estilos para o cabeçalho do card com BANT4 */
         .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .mini-badge { background-color: var(--v4-neon-red); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 5px rgba(255, 31, 45, 0.3); border: 1px solid rgba(255,255,255,0.2); }
 
@@ -81,7 +98,7 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <img src="data:image/webp;base64,UklGRpwEAABXRUJQVlA4IJAEAAAwIACdASpkAGQAPpE6mkiloyihKdM9oRASCWwAwzINfxHVWaw8F+Tv4zdXRx14A/HTqbqW84rmH/DfdH2n/Ev/UT+S/H/0k+Y39qvVk/4H6O+8T0AP7N/juto9AD9kvTI9mz90v2M9l652egLFzncz+X4fgz/pa5Weg8BZff7QUMRkndjSRbke0SWMMF7b3i8tO2U5n/fLf7kH+rzOvldOytP22E+IYtKM9DnpwB0f/apKpGmaKeV3TR2w+DPWqJs+cHj05hK4LdIu5tpxewSoH3ibX6MrZdYZ2IajE2RKtXIuRICX7gq286h0OnOLRUG0IpTB2S6Sbxc+2QeG3f7j73LpbEdBToeoQAD+/ho9hyZTMp9GKhzwuQY1SyVredtSksnAQUklC2Cj5cCywtyamrMbzH+riqH8pEvrm+pKf/c8HDIfGaxeOXHJ0jyMOyP9u7TnDyIv1Nseo3Vyi2tsr63fhG3fPNc5zEjCf4+bNY13h3IsOXc9ZPZljpIXtCT44qg6obrXOGDsQh7n4nIHcmvFKk2nZQg7rmnFOKjgFw4OReQiV/PAnPxvo+MaqSgGdX6gKxk9S7Nsfz/v66lUorSd3yaPufE1DdxbmQ09ESbmAG60TZXl9DdmtmU0OfzBxVG6AFdOLwvi40gxcB6tkhQMtqqCy7CfzA4H4f9EFApWqUgoF+g5uQp+AufohKkZN1gEwcTIK3C1zOAmohVe9dGM3zSUqZccSVouFotBWEUXJY27+dozzBvjVUIIgPV7vw53gnqsf0NzexdTkX3U0Wjs87CzpX8X1a0ZKhxtBrpzkoEBQUJuuFnU+LkKBwk59CVqOXtNSTrlElFuNH0BFQFnY0Z7ct9Ngx7cf171v8c2Pr8pwub22NzFxV46eR+BnhpB36Zq5DNqNIEqM25TqV5hWLwqsh+/34Q+glSAp1SRvXULtT412KZvjKRRYMML+CkLXTVk9QUS7pesIS8EkYwfrurQFM7Je5rrtUehCgqqu8u7ewQ7S8RWS/usdSoysbwiratLHWdxsKIgbueeI0kQf2iem/KAdFqPA8A8wCV/3fhbCXXnLsWeanAgEmGx2JIgqksKTl4hJrS4H/161i/n7cGurYKbivk9f74+HJtfsJp36gxEecc7NxFl94xwakGPwvWm6OFtLMjPI2UiHyuqcCafB4iLbnvgBlkG+RRMw9gbD0VD/vnBFrrlGIw43bzlZ6L9h68c1PNwl4/FOOymmEsRNiTPOLb5+HC8oPlgc76FtrQjcxzftSA3wDbAGS6KzzTPuSraTPl6qU1Rpef5XIYj782ogfUTf4//O2hqBgKQA/GEJ9rcDdNYizeJf9oFhgyOmH28h8z1iGjKdR8wntPP8OuOgfOBBJxmUTEkkNy3mxaYujPep2okZhhYK7Uj1shAscED2fbr7WuQPsIyHvkYDYfzPdrmXles+/6R7//c+gf1l0SMZEs7OEAQJfJt5AWCl3+MKmPsU/6DOMgV2yAe5An6q7UBHTJ2ASL5WVe+GsYGIlTnIOeXwf56F3/kvDLdSklC6mL8AAAA">
+            <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="80" style="margin-bottom:20px; filter: invert(1);">
             <h2 style="margin-bottom: 10px; font-size: 1.5rem; color: white;">V4 PLACERES&CO - CVC</h2>
             <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">Acesso Restrito - Franchise Intelligence</p>
             <input type="text" class="login-input" placeholder="ID do Usuário" value="cvc.admin">
@@ -93,7 +110,7 @@
     <div id="dashboard-container">
         <aside class="sidebar">
             <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
-                <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==">
+                <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="40" style="filter: invert(1);">
                 <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
             </div>
             <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase;">Analytics</div>
@@ -102,7 +119,7 @@
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
             <div class="user-profile">
-                <img src="data:image/webp;base64,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">
+                <img src="https://logodownload.org/wp-content/uploads/2014/10/cvc-logo-1.png" width="45" style="border-radius: 50%; background: #fff; padding: 8px; object-fit: contain;">
                 <div>
                     <div style="font-weight: 600; font-size: 0.9rem;">Admin CVC</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem;">Gestão</div>
@@ -111,11 +128,18 @@
         </aside>
 
         <main class="main-content">
+            <div class="top-right-filter">
+                <select id="month-filter" class="month-selector" onchange="applyMonthFilter()">
+                    <option value="all">Carregando...</option>
+                </select>
+            </div>
+
             <div id="section-overview" class="dashboard-section active-section">
                 <div class="header">
                     <h1>Visão Geral de Expansão</h1>
                     <p id="header-date">Dados consolidados: CARREGANDO...</p>
                 </div>
+
                 <div class="grid">
                     <div class="card span-4">
                         <div class="card-header-flex">
@@ -202,6 +226,8 @@
         };
 
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, map;
+        let GLOBAL_LEADS = []; 
+        let GLOBAL_LIVE_STATS = [];
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
 
@@ -256,38 +282,39 @@
                 const txtLeads = await resLeads.text();
                 const rowsLeads = parseCSV(txtLeads);
 
-                // 2. LIVES
-                let liveStats = { presente: 0, ausente: 0 };
-                let liveTimeline = {};
-                let currentLiveDate = null;
-
+                // 2. LIVES (Robô)
+                let liveStatsGlobal = []; 
                 if(LIVE_SHEET_URL) {
                     try {
                         const resLive = await fetch(LIVE_SHEET_URL);
                         const txtLive = await resLive.text();
                         const rowsLive = parseCSV(txtLive);
+                        let currentLiveDate = null;
+                        
                         rowsLive.forEach(row => {
                             const rowString = row.join(' ');
                             if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                                const match = rowString.match(/(\d{2}\/\d{2})/);
+                                const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/); 
                                 if(match) currentLiveDate = match[1]; 
                                 return;
                             }
                             const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente'));
                             if (statusCell) {
-                                if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
-                                if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
-                                if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
+                                liveStatsGlobal.push({
+                                    status: statusCell.toLowerCase(),
+                                    date: currentLiveDate 
+                                });
                             }
                         });
                     } catch(e) { console.warn("Erro Lives", e); }
                 }
+                GLOBAL_LIVE_STATS = liveStatsGlobal;
 
                 const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
-                    STATUS_K: 10, // COLUNA K (A=0, K=10)
+                    STATUS_K: 10,
                     STATUS_COLS: []
                 };
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
@@ -296,10 +323,9 @@
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                const leads = rowsLeads.slice(1).map(cols => {
+                GLOBAL_LEADS = rowsLeads.slice(1).map(cols => {
                     if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
-                    // STATUS DO FUNIL GERAL (Tentativas)
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
                     for (let colIndex of IDX.STATUS_COLS) {
@@ -310,33 +336,103 @@
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
 
-                    // STATUS ESPECÍFICO DA COLUNA K (ATIVO/INATIVO)
                     let statusK = (cols[IDX.STATUS_K] || "").toUpperCase().trim();
-                    // Se estiver vazio na coluna K, considera ATIVO
                     if (statusK === "") statusK = "ATIVO"; 
 
                     const rawCity = cols[IDX.CIDADE] || "";
-                    return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus, statusK: statusK };
+                    const dateParts = cols[IDX.DATA].split('/');
+                    const monthYear = `${dateParts[1]}/${dateParts[2]}`;
+
+                    return { 
+                        data: cols[IDX.DATA], 
+                        monthYear: monthYear, 
+                        cidade: rawCity, 
+                        status: finalStatus, 
+                        statusK: statusK 
+                    };
                 }).filter(i => i !== null);
 
-                updateDashboard(leads, liveStats, liveTimeline);
+                setupMonthFilter();
+
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
         }
 
+        function setupMonthFilter() {
+            const uniqueMonths = [...new Set(GLOBAL_LEADS.map(l => l.monthYear))];
+            uniqueMonths.sort((a,b) => {
+                const [mA, yA] = a.split('/');
+                const [mB, yB] = b.split('/');
+                return new Date(yB, mB) - new Date(yA, mA); 
+            });
+
+            const selector = document.getElementById('month-filter');
+            selector.innerHTML = '';
+            
+            const today = new Date();
+            const currentMonthStr = String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
+            
+            uniqueMonths.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                const [mm, yyyy] = m.split('/');
+                const dateObj = new Date(yyyy, mm - 1);
+                const monthName = dateObj.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+                opt.text = `${monthName} ${yyyy}`;
+                selector.appendChild(opt);
+            });
+
+            if(uniqueMonths.includes(currentMonthStr)) {
+                selector.value = currentMonthStr;
+            } else if (uniqueMonths.length > 0) {
+                selector.value = uniqueMonths[0];
+            }
+
+            applyMonthFilter();
+        }
+
+        function applyMonthFilter() {
+            const selectedMonthYear = document.getElementById('month-filter').value;
+            
+            // 1. Filtra Leads
+            const filteredLeads = GLOBAL_LEADS.filter(l => l.monthYear === selectedMonthYear);
+
+            // 2. Filtra Lives
+            let filteredLiveStats = { presente: 0, ausente: 0 };
+            let filteredLiveTimeline = {};
+
+            if (GLOBAL_LIVE_STATS.length > 0) {
+                GLOBAL_LIVE_STATS.forEach(ls => {
+                    if (ls.date && ls.date.includes(selectedMonthYear)) { 
+                        if(ls.status === 'presente') filteredLiveStats.presente++;
+                        if(ls.status === 'ausente') filteredLiveStats.ausente++;
+                        
+                        const dayMonth = ls.date.substring(0, 5); 
+                        filteredLiveTimeline[dayMonth] = (filteredLiveTimeline[dayMonth] || 0) + 1;
+                    }
+                });
+            }
+
+            // ATUALIZA O TÍTULO AUTOMATICAMENTE COM O MÊS SELECIONADO
+            const [selMM, selYYYY] = selectedMonthYear.split('/');
+            const selDateObj = new Date(selYYYY, selMM - 1);
+            const selMonthName = selDateObj.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            document.getElementById('header-date').innerText = `Dados consolidados: ${selMonthName} ${selYYYY}`;
+            document.getElementById('leads-title').innerText = `VOLUME DIÁRIO DE LEADS (${selMonthName})`;
+
+            updateDashboard(filteredLeads, filteredLiveStats, filteredLiveTimeline);
+        }
+
         function updateDashboard(leads, liveStats, liveTimeline) {
-            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
-            const k_ativos = leads.filter(l => l.statusK === "ATIVO").length; // Vazio na planilha
+            // GRÁFICO 1
+            const k_ativos = leads.filter(l => l.statusK === "ATIVO").length;
             const k_qualificados = leads.filter(l => l.statusK.includes("QUALIFICADO")).length;
             const k_inativos = leads.filter(l => l.statusK.includes("INATIVO") || l.statusK.includes("DESATIVAR")).length;
-
-            // Cores: Ativo (Vermelho), Qualificado (Verde), Inativo (Cinza)
             chartQualidade.data.datasets[0].data = [k_ativos, k_qualificados, k_inativos];
             chartQualidade.update();
 
-            // ATUALIZA O MINI INDICADOR BANT4 NO TÍTULO
+            // BANT4 Badge
             const bant4_total = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             document.getElementById('kpi-bant-mini').innerText = `${bant4_total} BANT4`;
-
 
             // CIDADES
             const cityCount = {};
@@ -349,13 +445,13 @@
             // PIE LIVE
             const totalLeads = leads.length;
             const processadosLive = liveStats.presente + liveStats.ausente;
-            const semRespostaLive = totalLeads - processadosLive;
-            const semRespostaFinal = semRespostaLive > 0 ? semRespostaLive : 0;
+            let semRespostaLive = totalLeads - processadosLive;
+            if(semRespostaLive < 0) semRespostaLive = 0; 
 
-            chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaFinal, liveStats.ausente];
+            chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaLive, liveStats.ausente];
             chartReuniao.update();
 
-            // FUNIL GERAL
+            // FUNIL
             const contatado = leads.filter(l => l.status.includes('CONTATADO')).length;
             const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
@@ -369,9 +465,14 @@
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
-            const liveLabels = Object.keys(liveTimeline).length > 0 ? Object.keys(liveTimeline).sort() : labels;
-            chartLivesTimeline.data.labels = liveLabels;
-            chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
+            const liveKeys = Object.keys(liveTimeline).sort();
+            if(liveKeys.length > 0) {
+                chartLivesTimeline.data.labels = liveKeys;
+                chartLivesTimeline.data.datasets[0].data = liveKeys.map(d => liveTimeline[d]);
+            } else {
+                chartLivesTimeline.data.labels = labels;
+                chartLivesTimeline.data.datasets[0].data = labels.map(() => 0);
+            }
             chartLivesTimeline.update();
 
             // MAPA
@@ -389,23 +490,17 @@
         function initCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
             
-            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
             chartQualidade = new Chart(document.getElementById('chartQualidade'), {
                 type: 'pie', 
                 data: { 
                     labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'],
                     datasets: [{ 
                         data: [0, 0, 0], 
-                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], // Vermelho, Verde, Cinza
+                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], 
                         borderWidth: 0 
                     }] 
                 },
-                options: { 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } 
-                    } 
-                }
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
             });
 
             const ctxCid = document.getElementById('chartCidades').getContext('2d');
@@ -424,6 +519,3 @@
     </script>
 </body>
 </html>
-
-
-

@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
+        /* --- DESIGN ORIGINAL (DARK NEON) --- */
         :root {
             --bg-main: #0a0a0a; 
             --bg-secondary: #141414; 
@@ -32,7 +33,7 @@
             overflow: hidden;
         }
 
-        /* --- TELA DE LOGIN --- */
+        /* TELA DE LOGIN */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-main);
@@ -65,7 +66,7 @@
         }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* --- DASHBOARD --- */
+        /* DASHBOARD LAYOUT */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
@@ -80,7 +81,7 @@
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
         .header p { color: var(--text-muted); font-size: 0.9rem;}
 
-        /* --- CARDS & GRID --- */
+        /* CARDS & GRID */
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
@@ -93,7 +94,7 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MAPA --- */
+        /* MAPA */
         .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
         .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
         .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
@@ -101,7 +102,6 @@
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
         .leaflet-popup-tip { background: #141414; }
         
-        /* --- TEXTO NO MEIO DO GRÁFICO --- */
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
     </style>
@@ -148,7 +148,7 @@
             <div id="section-overview" class="dashboard-section active-section">
                 <div class="header">
                     <h1>Visão Geral de Expansão</h1>
-                    <p>Dados consolidados: JANEIRO 2026</p>
+                    <p>Dados consolidados: 2026</p>
                 </div>
 
                 <div class="grid">
@@ -171,7 +171,7 @@
                     </div>
 
                     <div class="card span-4 yellow-accent">
-                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
+                        <span class="card-title">PARTICIPAÇÃO LIVE (GERAL)</span>
                         <div style="height: 200px;">
                             <canvas id="chartReuniao"></canvas>
                         </div>
@@ -193,7 +193,7 @@
                 </div>
                 <div class="grid">
                     <div class="card span-12">
-                        <span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span>
+                        <span class="card-title">VOLUME DIÁRIO DE LEADS</span>
                         <div style="height: 400px;">
                             <canvas id="chartLeadsTimeline"></canvas>
                         </div>
@@ -238,11 +238,11 @@
     </div>
 
     <script>
-        // --- 1. LINK DA SUA PLANILHA (ABA CERTA) ---
-        // Extraído do seu Iframe: gid=1787906905
+        // --- 1. SEU LINK CORRIGIDO MANUALMENTE ---
+        // Peguei o seu link pubhtml?gid=1787906905 e transformei em pub?gid=...&output=csv
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
 
-        // --- 2. COORDENADAS (CIDADES) ---
+        // --- 2. COORDENADAS ---
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
@@ -298,9 +298,10 @@
             }, 500);
         }
 
-        // PARSER CSV ROBUSTO (Resolve problema de separadores)
+        // PARSER CSV ROBUSTO
         function parseCSV(text) {
             const lines = text.split('\n');
+            // Detecta se usa vírgula ou ponto e vírgula
             const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
             const result = [];
             for (let i = 0; i < lines.length; i++) { 
@@ -320,50 +321,44 @@
         async function fetchData() {
             try {
                 const response = await fetch(SHEET_URL);
+                if(!response.ok) throw new Error("Erro na conexão");
                 const text = await response.text();
+                
+                // Se retornou HTML (DOCTYPE), o link está errado. 
+                if(text.trim().startsWith("<!DOCTYPE")) {
+                    alert("Erro: O link ainda está vindo como HTML. Tente republicar a planilha.");
+                    return;
+                }
+
                 const allRows = parseCSV(text); 
 
-                // DETECTOR DE COLUNAS (Lê o cabeçalho)
+                // DETECTOR DE COLUNAS
                 const headers = allRows[0].map(h => h.toUpperCase().trim());
-                
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
                     STATUS_COLS: []
                 };
-
-                // Encontra todas as colunas de TENTATIVA
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
 
-                // Se não achar, usa padrão
                 if(IDX.DATA === -1) IDX.DATA = 0;
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                // FILTRO DE LINHAS VÁLIDAS
+                // FILTRAGEM E PROCESSAMENTO
                 const leads = allRows.slice(1).map(cols => {
                     if(cols.length < 5) return null;
-                    
-                    // Se a coluna Data não tem números, ignora (limpa sujeira)
-                    if (!cols[IDX.DATA].match(/\d/)) return null;
+                    if (!cols[IDX.DATA].match(/\d/)) return null; // Deve ter número na data
 
-                    // LÓGICA DE STATUS
+                    // STATUS INTELIGENTE
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
-
                     for (let colIndex of IDX.STATUS_COLS) {
                         const val = (cols[colIndex] || "").toUpperCase().trim();
                         if (!val || val === "-" || val === "") continue;
-
-                        if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) {
-                            finalStatus = val; foundMeaningful = true; break; 
-                        }
-                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) {
-                            finalStatus = val; foundMeaningful = true; 
-                        }
-                        if (!foundMeaningful && !val.includes("SEM RESPOSTA")) {
-                            finalStatus = val;
-                        }
+                        if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) { finalStatus = val; foundMeaningful = true; break; }
+                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) { finalStatus = val; foundMeaningful = true; }
+                        if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
 
                     // CIDADE
@@ -382,7 +377,7 @@
 
                 updateDashboard(leads);
 
-            } catch (error) { console.error(error); alert("Erro ao carregar dados. Verifique o link CSV."); }
+            } catch (error) { console.error(error); alert("Erro ao carregar dados."); }
         }
 
         function updateDashboard(leads) {

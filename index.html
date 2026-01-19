@@ -11,7 +11,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* --- VISUAL DARK NEON PREMIUM --- */
         :root {
             --bg-main: #0a0a0a; 
             --bg-secondary: #141414; 
@@ -34,14 +33,40 @@
             overflow: hidden;
         }
 
-        /* LOGIN */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%); transition: opacity 0.5s ease; }
-        .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
-        .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-main);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+            background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%);
+            transition: opacity 0.5s ease;
+        }
+
+        .login-box {
+            background: var(--bg-secondary); padding: 40px; border-radius: 24px;
+            width: 450px; text-align: center; border: 1px solid #2a2a2a;
+            box-shadow: 0 0 40px rgba(255, 31, 45, 0.15);
+            display: flex; flex-direction: column; align-items: center; 
+        }
+
+        .login-input {
+            width: 100%; padding: 15px; margin-bottom: 20px;
+            background: var(--bg-main); border: 1px solid #333; border-radius: 12px;
+            color: var(--text-bright); font-family: inherit; outline: none; transition: 0.3s;
+        }
+        .login-input:focus { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.3); }
+
+        .login-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red));
+            color: white; border: none; border-radius: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* DASHBOARD LAYOUT */
+        /* --- DASHBOARD --- */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
@@ -56,7 +81,7 @@
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
         .header p { color: var(--text-muted); font-size: 0.9rem;}
 
-        /* CARDS & GRID */
+        /* --- CARDS & GRID --- */
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
@@ -69,13 +94,15 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MAPA */
+        /* --- MAPA --- */
         .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
         .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
         .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+        
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
         .leaflet-popup-tip { background: #141414; }
         
+        /* --- GRÁFICOS --- */
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; z-index: 10; }
         
@@ -88,7 +115,7 @@
 
     <div id="login-screen">
         <div class="login-box">
-            <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="80" style="margin-bottom:20px; filter: invert(1);">
+            <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="80" style="margin-bottom:20px;">
             <h2 style="margin-bottom: 10px; font-size: 1.5rem; color: white;">V4 PLACERES&CO - CVC</h2>
             <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">Acesso Restrito - Franchise Intelligence</p>
             <input type="text" class="login-input" placeholder="ID do Usuário" value="cvc.admin">
@@ -101,7 +128,7 @@
         
         <aside class="sidebar">
             <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="40" style="filter: invert(1);">
+                <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="80" style="margin-bottom:20px;">
                 <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
             </div>
 
@@ -149,7 +176,7 @@
                     </div>
 
                     <div class="card span-4 yellow-accent">
-                        <span class="card-title">PARTICIPAÇÃO LIVE</span>
+                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
                         <div style="height: 200px;">
                             <canvas id="chartReuniao"></canvas>
                         </div>
@@ -216,11 +243,10 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURAÇÃO DOS LINKS ---
-        const LEADS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
-        const LIVE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8KWWCjb7eYtXhLEpsgxgRI7wurO2HqO0YLcoSAKxkdLTuVGNiQ86HRMz5AKLaIJbnckxl9P4d6TJP/pub?gid=859560778&single=true&output=csv';
+        // --- 1. LINK DE DADOS DINÂMICOS (CSV) ---
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
 
-        // --- 2. COORDENADAS ---
+        // --- 2. COORDENADAS PARA O MAPA ---
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
@@ -265,13 +291,16 @@
             "juazeiro do norte": [-7.2372, -39.3222]
         };
 
+        // --- VARIÁVEIS GLOBAIS ---
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, map;
 
         function showError(msg) {
-            document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`;
-            document.getElementById('error-display').style.display = 'block';
+            const el = document.getElementById('error-display');
+            el.innerHTML = `<strong>⚠️ Erro Detectado:</strong><br>${msg}`;
+            el.style.display = 'block';
         }
 
+        // --- INICIALIZAÇÃO ---
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
@@ -279,28 +308,41 @@
                 document.getElementById('dashboard-container').style.display = 'flex';
                 initCharts(); 
                 setTimeout(initMap, 200); 
-                fetchData();
+                fetchData(); // Busca dados do CSV
             }, 500);
         }
 
-        function switchTab(t, b) {
-            document.querySelectorAll('.dashboard-section').forEach(e=>e.style.display='none');
-            document.getElementById(t).style.display='block';
-            document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
-            document.getElementById(b).classList.add('active');
-            if(t==='section-geo') setTimeout(()=>map.invalidateSize(), 200);
+        function switchTab(targetId, btnId) {
+            document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active-section'));
+            
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                targetSection.style.display = 'block';
+                targetSection.classList.add('active-section');
+            }
+
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            const activeBtn = document.getElementById(btnId);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            if(targetId === 'section-geo') setTimeout(() => { map.invalidateSize(); }, 200);
         }
 
+        // --- LÓGICA DE DADOS (CSV) ---
         function parseCSV(text) {
             const lines = text.split('\n');
-            const separator = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
+            const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
             const result = [];
-            for(let i=0; i<lines.length; i++) {
-                if(!lines[i].trim()) continue;
+            for (let i = 0; i < lines.length; i++) { 
+                if (!lines[i].trim()) continue;
                 const regex = new RegExp(`(?:${separator}|\\r?\\n|^)(?:"([^"]*)"|([^"${separator}\\r\\n]*))`, 'gi');
                 const row = [];
                 let matches;
-                while((matches = regex.exec(lines[i]))) row.push(matches[1] || matches[2] || ''.trim());
+                while ((matches = regex.exec(lines[i]))) {
+                    let val = matches[1] || matches[2] || '';
+                    row.push(val.trim());
+                }
                 result.push(row);
             }
             return result;
@@ -308,41 +350,19 @@
 
         async function fetchData() {
             try {
-                // 1. LEADS
-                const resLeads = await fetch(LEADS_URL);
-                const txtLeads = await resLeads.text();
-                const rowsLeads = parseCSV(txtLeads);
-
-                // 2. LIVES (Robô)
-                let liveStats = { presente: 0, ausente: 0 };
-                let liveTimeline = {};
-                let currentLiveDate = null;
-
-                if(LIVE_SHEET_URL) {
-                    try {
-                        const resLive = await fetch(LIVE_SHEET_URL);
-                        const txtLive = await resLive.text();
-                        const rowsLive = parseCSV(txtLive);
-                        
-                        rowsLive.forEach(row => {
-                            const rowString = row.join(' ');
-                            if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                                const match = rowString.match(/(\d{2}\/\d{2})/);
-                                if(match) currentLiveDate = match[1]; 
-                                return;
-                            }
-                            const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente'));
-                            if (statusCell) {
-                                if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
-                                if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
-                                if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
-                            }
-                        });
-                    } catch(e) { console.warn("Erro Lives", e); }
+                const response = await fetch(SHEET_URL);
+                if(!response.ok) throw new Error("Erro na conexão");
+                const text = await response.text();
+                
+                if(text.trim().startsWith("<!DOCTYPE")) {
+                    showError("Link inválido. Verifique se publicou como CSV.");
+                    return;
                 }
 
-                // 3. PROCESSAMENTO
-                const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
+                const allRows = parseCSV(text); 
+
+                // DETECTOR DE COLUNAS
+                const headers = allRows[0].map(h => h.toUpperCase().trim());
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
@@ -354,124 +374,195 @@
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                const leads = rowsLeads.slice(1).map(cols => {
-                    if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
-                    
+                // FILTRO E PROCESSAMENTO
+                const leads = allRows.slice(1).map(cols => {
+                    if(cols.length < 5) return null;
+                    if (!cols[IDX.DATA].match(/\d/)) return null; 
+
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
                     for (let colIndex of IDX.STATUS_COLS) {
                         const val = (cols[colIndex] || "").toUpperCase().trim();
                         if (!val || val === "-" || val === "") continue;
-                        if (val.includes("BANT") || val.includes("QUALIFICADO")) { finalStatus = val; foundMeaningful = true; break; }
-                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO") || val.includes("FALTOU")) { finalStatus = val; foundMeaningful = true; }
+                        if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) { finalStatus = val; foundMeaningful = true; break; }
+                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) { finalStatus = val; foundMeaningful = true; }
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
+
                     const rawCity = cols[IDX.CIDADE] || "";
+                    
                     return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus };
                 }).filter(i => i !== null);
 
-                updateDashboard(leads, liveStats, liveTimeline);
-            } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
+                updateDashboard(leads);
+
+            } catch (error) { console.error(error); showError(error.message); }
         }
 
-        function updateDashboard(leads, liveStats, liveTimeline) {
+        // --- ATUALIZAÇÃO DOS GRÁFICOS ---
+        function updateDashboard(leads) {
             // KPI
-            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
+            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO') || l.status.includes('FRANQUEADO')).length;
             document.getElementById('kpi-bant').innerText = bant4;
             chartQualidade.data.datasets[0].data = [bant4, leads.length - bant4];
             chartQualidade.update();
 
             // CIDADES
             const cityCount = {};
-            leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade]||0)+1; });
-            const topCities = Object.entries(cityCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
-            chartCidades.data.labels = topCities.map(c=>c[0]);
-            chartCidades.data.datasets[0].data = topCities.map(c=>c[1]);
+            leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade] || 0) + 1; });
+            const topCities = Object.entries(cityCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            
+            chartCidades.data.labels = topCities.map(c => c[0]);
+            chartCidades.data.datasets[0].data = topCities.map(c => c[1]);
             chartCidades.update();
 
-            // PIE LIVE
-            const totalLeads = leads.length;
-            const processadosLive = liveStats.presente + liveStats.ausente;
-            const semRespostaLive = totalLeads - processadosLive;
-            const semRespostaFinal = semRespostaLive > 0 ? semRespostaLive : 0;
-
-            chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaFinal, liveStats.ausente];
-            chartReuniao.update();
-
             // FUNIL
-            const contatado = leads.filter(l => l.status.includes('CONTATADO')).length;
+            const contatado = leads.filter(l => l.status.includes('CONTATADO') || l.status.includes('AGENDADA') || l.status.includes('REUNIÃO')).length;
+            const participou = leads.filter(l => l.status.includes('PARTICIPOU')).length;
             const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
-            chartLive.data.datasets[0].data = [semResp, contatado, bant4, liveStats.presente];
+            chartLive.data.datasets[0].data = [semResp, contatado, bant4, participou];
             chartLive.update();
 
-            // TIMELINES
-            const dates = {};
-            leads.forEach(l => { const d = l.data.substring(0,5); dates[d] = (dates[d]||0)+1; });
-            const labels = Object.keys(dates).sort();
-            chartLeadsTimeline.data.labels = labels;
-            chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
-            chartLeadsTimeline.update();
+            // PIE (LIVE)
+            const faltou = leads.filter(l => l.status.includes('FALTOU')).length;
+            const semInfo = leads.length - (participou + faltou);
+            chartReuniao.data.datasets[0].data = [participou, semInfo, faltou]; // Ordem: Verde, Cinza, Vermelho
+            chartReuniao.update();
 
-            const liveLabels = Object.keys(liveTimeline).length > 0 ? Object.keys(liveTimeline).sort() : labels;
-            chartLivesTimeline.data.labels = liveLabels;
-            chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
-            chartLivesTimeline.update();
-
-            // MAPA
-            map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
-            for(const [cidade, qtd] of Object.entries(cityCount)) {
-                const clean = cidade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                const coords = COORDENADAS[clean];
-                if(coords) {
-                    L.marker(coords, { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) })
-                     .addTo(map).bindPopup(`<b>${cidade}</b><br>${qtd} Leads`);
+            // MAPA (AGRUPADO POR CIDADE)
+            if(map) {
+                map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
+                for (const [cidadeName, count] of Object.entries(cityCount)) {
+                    const cleanName = cidadeName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const coords = COORDENADAS[cleanName];
+                    if (coords) {
+                        L.marker(coords, { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) })
+                         .addTo(map)
+                         .bindPopup(`<b>${cidadeName}</b><br>${count} Leads`);
+                    }
                 }
             }
+
+            // TIMELINE
+            const dates = {};
+            leads.forEach(l => { 
+                let d = 'N/D';
+                if(l.data && l.data.length >= 5) d = l.data.substring(0, 5);
+                dates[d] = (dates[d]||0)+1; 
+            });
+            const labels = Object.keys(dates).sort();
+            
+            // Gráfico Vermelho (Leads)
+            chartLeadsTimeline.data.labels = labels;
+            chartLeadsTimeline.data.datasets[0].data = labels.map(d => dates[d]);
+            chartLeadsTimeline.update();
+            
+            // Gráfico Amarelo (Lives - Exemplo com mesmos dados)
+            chartLivesTimeline.data.labels = labels; 
+            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]);
+            chartLivesTimeline.update();
         }
 
+        // --- INICIALIZAÇÃO GRÁFICA (SETUP) ---
         function initCharts() {
-            Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-            
+            Chart.defaults.color = '#8c8c8c';
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+            // OVERVIEW - KPI
             chartQualidade = new Chart(document.getElementById('chartQualidade'), {
-                type: 'doughnut', data: { datasets: [{ data: [0,1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }] },
+                type: 'doughnut',
+                data: {
+                    labels: ['BANT4', 'Outros'],
+                    datasets: [{ data: [0, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }]
+                },
                 options: { cutout: '85%', plugins: { legend: { display: false } }, maintainAspectRatio: false }
             });
 
+            // OVERVIEW - CIDADES (Gradiente Vermelho)
             const ctxCid = document.getElementById('chartCidades').getContext('2d');
-            const grad = ctxCid.createLinearGradient(0,0,0,300); grad.addColorStop(0,'#ff1f2d'); grad.addColorStop(1,'#600000');
+            const grad = ctxCid.createLinearGradient(0, 0, 0, 300);
+            grad.addColorStop(0, '#ff1f2d'); grad.addColorStop(1, '#600000');
             chartCidades = new Chart(ctxCid, {
-                type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] },
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
             });
 
-            // PIZZA LIVE (SEM TEXTO DENTRO)
+            // OVERVIEW - PIZZA LIVE (Verde/Cinza/Vermelho)
             chartReuniao = new Chart(document.getElementById('chartReuniao'), {
-                type: 'pie', data: { labels: ['Presente', 'Sem Resposta', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#333', '#d32f2f'], borderWidth: 0 }] },
+                type: 'pie',
+                data: {
+                    labels: ['Presente', 'Sem Resposta', 'Ausente'],
+                    datasets: [{ data: [0, 0, 0], backgroundColor: ['#00c853', '#333333', '#d32f2f'], borderWidth: 0 }]
+                },
                 options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
             });
 
+            // OVERVIEW - FUNIL
             chartLive = new Chart(document.getElementById('chartLive'), {
-                type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                type: 'bar', indexAxis: 'y',
+                data: {
+                    labels: ['SEM RESPOSTA', 'CONTATADO', 'BANT4', 'PARTICIPOU'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: (ctx) => {
+                            const l = ctx.chart.data.labels[ctx.dataIndex];
+                            if(l === 'PARTICIPOU' || l === 'BANT4') return '#00c853'; // Verde
+                            if(l === 'CONTATADO') return '#ffd700'; // Amarelo
+                            return '#ff1f2d'; // Vermelho
+                        },
+                        borderRadius: 4, barThickness: 15
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { display: false } } } }
             });
 
-            const commonLineOptions = {
-                maintainAspectRatio: false, plugins: { legend: { display: false } },
-                scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } }
-            };
-
+            // PERFORMANCE DE LEADS (Linha Vermelha Suave)
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), {
-                type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] },
-                options: commonLineOptions
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Novos Leads',
+                        data: [],
+                        borderColor: '#ff1f2d',
+                        backgroundColor: 'rgba(255, 31, 45, 0.1)',
+                        fill: true,
+                        tension: 0.4, // Curva suave
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ff1f2d'
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } }
             });
 
+            // RELATÓRIO DE LIVES (Linha Amarela Suave)
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), {
-                type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] },
-                options: commonLineOptions
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Cadastros Live',
+                        data: [],
+                        borderColor: '#ffd700',
+                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ffd700'
+                    }]
+                },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } }
             });
         }
 
-        function initMap() { if(!map) { map = L.map('map').setView([-14.235, -51.925], 4); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}').addTo(map); } }
+        // --- MAPA ---
+        function initMap() {
+            if(map) return;
+            map = L.map('map').setView([-14.2350, -51.9253], 4);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map);
+        }
     </script>
 </body>
 </html>

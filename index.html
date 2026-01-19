@@ -12,97 +12,50 @@
 
     <style>
         :root {
-            --bg-main: #0a0a0a; 
-            --bg-secondary: #141414; 
-            --bg-tertiary: #1f1f1f; 
-            --text-bright: #ffffff;
-            --text-muted: #8c8c8c;
-            --v4-neon-red: #ff1f2d; 
-            --v4-dark-red: #a30009;
-            --cvc-neon-yellow: #ffd700;
-            --status-green: #00c853;
+            --bg-main: #0a0a0a; --bg-secondary: #141414; --bg-tertiary: #1f1f1f; 
+            --text-bright: #ffffff; --text-muted: #8c8c8c;
+            --v4-neon-red: #ff1f2d; --v4-dark-red: #a30009;
+            --cvc-neon-yellow: #ffd700; --status-green: #00c853;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-bright); height: 100vh; overflow: hidden; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-bright);
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- TELA DE LOGIN --- */
-        #login-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-main);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999;
-            background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%);
-            transition: opacity 0.5s ease;
-        }
-
-        .login-box {
-            background: var(--bg-secondary); padding: 40px; border-radius: 24px;
-            width: 450px; text-align: center; border: 1px solid #2a2a2a;
-            box-shadow: 0 0 40px rgba(255, 31, 45, 0.15);
-            display: flex; flex-direction: column; align-items: center; 
-        }
-
-        .login-input {
-            width: 100%; padding: 15px; margin-bottom: 20px;
-            background: var(--bg-main); border: 1px solid #333; border-radius: 12px;
-            color: var(--text-bright); font-family: inherit; outline: none; transition: 0.3s;
-        }
-        .login-input:focus { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.3); }
-
-        .login-btn {
-            width: 100%; padding: 15px;
-            background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red));
-            color: white; border: none; border-radius: 12px;
-            font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
+        /* LOGIN */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%); transition: opacity 0.5s ease; }
+        .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
+        .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
+        .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* --- DASHBOARD --- */
+        /* DASHBOARD */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
-        
-        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
+        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-weight: 500; transition: 0.3s; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
         .nav-item.active { background: rgba(255, 31, 45, 0.1); color: var(--v4-neon-red); box-shadow: inset 3px 0 0 var(--v4-neon-red); }
-
         .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
-
         .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;}
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
-        .header p { color: var(--text-muted); font-size: 0.9rem;}
-
-        /* --- CARDS & GRID --- */
+        
+        /* GRID & CARDS */
+        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
         .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 1px; }
-
-        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
-        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12{ grid-column: span 12;}
-
+        
         .dashboard-section { display: none; animation: fadeIn 0.4s ease; }
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MAPA --- */
+        /* MAPA & CHART */
         .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
         .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
         .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
-        
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
         .leaflet-popup-tip { background: #141414; }
-        
-        /* --- TEXTO NO MEIO DO GRÁFICO --- */
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
     </style>
@@ -121,20 +74,16 @@
     </div>
 
     <div id="dashboard-container">
-        
         <aside class="sidebar">
             <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
                 <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="40" style="filter: invert(1);">
                 <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
             </div>
-
             <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase;">Analytics</div>
-            
             <div id="btn-overview" class="nav-item active" onclick="switchTab('section-overview', 'btn-overview')">Overview Geral</div>
             <div id="btn-leads" class="nav-item" onclick="switchTab('section-leads', 'btn-leads')">Performance de Leads</div>
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
-
             <div class="user-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin+CVC&background=ff1f2d&color=fff" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
                 <div>
@@ -145,376 +94,199 @@
         </aside>
 
         <main class="main-content">
-            
             <div id="section-overview" class="dashboard-section active-section">
-                <div class="header">
-                    <h1>Visão Geral de Expansão</h1>
-                    <p>Dados consolidados: JANEIRO 2026</p>
-                </div>
-
+                <div class="header"><h1>Visão Geral de Expansão</h1><p>Dados consolidados: JANEIRO 2026</p></div>
                 <div class="grid">
                     <div class="card span-4">
                         <span class="card-title">LEADS (BANT4)</span>
                         <div class="chart-wrapper">
                             <canvas id="chartQualidade"></canvas>
-                            <div class="chart-center-text">
-                                <div style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div>
-                                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div>
-                            </div>
+                            <div class="chart-center-text"><div id="kpi-bant" style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div><div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div></div>
                         </div>
                     </div>
-
-                    <div class="card span-8">
-                        <span class="card-title">Top 5 Cidades (Vol. Leads)</span>
-                        <div style="height: 220px;">
-                            <canvas id="chartCidades"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="card span-4 yellow-accent">
-                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
-                        <div style="height: 200px;">
-                            <canvas id="chartReuniao"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="card span-8">
-                        <span class="card-title">STATUS DO FUNIL (Detalhado)</span>
-                        <div style="height: 200px;">
-                            <canvas id="chartLive"></canvas>
-                        </div>
-                    </div>
+                    <div class="card span-8"><span class="card-title">Top 5 Cidades (Vol. Leads)</span><div style="height: 220px;"><canvas id="chartCidades"></canvas></div></div>
+                    <div class="card span-4 yellow-accent"><span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
+                    <div class="card span-8"><span class="card-title">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
                 </div>
             </div>
-
             <div id="section-leads" class="dashboard-section">
-                <div class="header">
-                    <h1>Performance de Leads</h1>
-                    <p>Evolução diária de novos cadastros.</p>
-                </div>
-                <div class="grid">
-                    <div class="card span-12">
-                        <span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span>
-                        <div style="height: 400px;">
-                            <canvas id="chartLeadsTimeline"></canvas>
-                        </div>
-                    </div>
-                </div>
+                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária de novos cadastros.</p></div>
+                <div class="grid"><div class="card span-12"><span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span><div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div></div></div>
             </div>
-
             <div id="section-geo" class="dashboard-section">
-                <div class="header">
-                    <h1>Expansão Geográfica</h1>
-                    <p>Mapeamento das principais praças de interesse.</p>
-                </div>
-                <div class="grid">
-                    <div class="card span-12">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <span class="card-title" style="margin:0;">Mapa Interativo</span>
-                            <div style="display: flex; gap: 15px; font-size: 0.75rem;">
-                                <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px; height:10px; background: #ff1f2d; border-radius:50%;"></span> Lead Ativo</span>
-                            </div>
-                        </div>
-                        <div id="map" class="map-container"></div>
-                    </div>
-                </div>
+                <div class="header"><h1>Expansão Geográfica</h1><p>Mapeamento das principais praças de interesse.</p></div>
+                <div class="grid"><div class="card span-12"><div id="map" class="map-container"></div></div></div>
             </div>
-            
             <div id="section-lives" class="dashboard-section">
-                <div class="header">
-                    <h1>Relatório de Lives</h1>
-                    <p>Cadastros para a Live por dia.</p>
-                </div>
-                <div class="grid">
-                    <div class="card span-12">
-                        <span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span>
-                        <div style="height: 400px;">
-                            <canvas id="chartLivesTimeline"></canvas>
-                        </div>
-                    </div>
-                </div>
+                <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live por dia.</p></div>
+                <div class="grid"><div class="card span-12"><span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
             </div>
-
         </main>
     </div>
 
     <script>
-        // --- 1. LINK DA PLANILHA ---
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?output=csv';
 
-        // --- 2. CONFIGURAÇÃO DAS COLUNAS ---
-        const COL = {
-            DATA: 0,       // Coluna A
-            NOME: 1,       // Coluna B
-            CIDADE: 4,     // Coluna E
-            
-            // TENTATIVAS (Colunas L, M, N, O, P)
-            TENTATIVA_START: 11, // Coluna L (Tentativa 1)
-            TENTATIVA_END: 15    // Coluna P (Tentativa 5)
-        };
+        // CONFIGURAÇÃO DAS COLUNAS (A=0, B=1, E=4, L=11, P=15)
+        const COL = { DATA: 0, NOME: 1, CIDADE: 4, TENTATIVA_START: 11, TENTATIVA_END: 15 };
 
+        // COORDENADAS (Adicione mais cidades aqui se precisar)
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
             "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345],
-            "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919],
-            "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016],
-            "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434],
-            "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733],
-            "manaus": [-3.1190, -60.0217],
-            "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770],
-            "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177],
-            "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648],
-            "belem": [-1.4558, -48.4902],
-            "guarulhos": [-23.4515, -46.5333],
-            "campinas": [-22.9099, -47.0626],
-            "sao luis": [-2.5307, -44.3068],
-            "sao goncalo": [-22.8275, -43.0631],
-            "maceio": [-9.6662, -35.7351],
-            "duque de caxias": [-22.7923, -43.3108],
-            "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201],
-            "natal": [-5.7945, -35.2110],
-            "teresina": [-5.0919, -42.8034],
-            "sao bernardo do campo": [-23.6914, -46.5646],
-            "joao pessoa": [-7.1195, -34.8450],
-            "nova iguacu": [-22.7561, -43.4607],
-            "santo andre": [-23.6638, -46.5383],
-            "osasco": [-23.5336, -46.7920],
-            "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009],
-            "jaboatao dos guararapes": [-8.1782, -35.0354],
-            "ribeirao preto": [-21.1704, -47.8103],
-            "uberlandia": [-18.9113, -48.2622],
-            "contagem": [-19.9326, -44.0538],
-            "sorocaba": [-23.5015, -47.4521],
-            "aracaju": [-10.9472, -37.0731],
-            "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979],
-            "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128],
-            "juiz de fora": [-21.7661, -43.3503],
-            "londrina": [-23.3045, -51.1696],
-            "niteroi": [-22.8808, -43.1043],
-            "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480]
+            "brasilia": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016],
+            "fortaleza": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733],
+            "manaus": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770],
+            "porto alegre": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648],
+            "belem": [-1.4558, -48.4902], "campinas": [-22.9099, -47.0626],
+            "sao luis": [-2.5307, -44.3068], "maceio": [-9.6662, -35.7351],
+            "campo grande": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110],
+            "teresina": [-5.0919, -42.8034], "joao pessoa": [-7.1195, -34.8450],
+            "aracaju": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979],
+            "vitoria": [-20.3155, -40.3128], "florianopolis": [-27.5954, -48.5480],
+            "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222]
         };
 
-        // --- VARIÁVEIS GLOBAIS ---
-        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline;
-        let map;
+        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, map;
 
-        // --- 4. INICIALIZAÇÃO ---
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-container').style.display = 'flex';
-                initEmptyCharts();
-                initMap();
-                fetchData();
+                initEmptyCharts(); initMap(); fetchData();
             }, 500);
+        }
+
+        // PARSER CSV ROBUSTO (Resolve problema de vírgulas e pontos e vírgulas)
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            const result = [];
+            // Detecta separador na primeira linha (Header)
+            const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
+            
+            for (let i = 1; i < lines.length; i++) { // Pula header
+                if (!lines[i].trim()) continue;
+                // Regex mágica que respeita aspas: 'Campo 1,"Campo, com, virgula",Campo 3'
+                const regex = new RegExp(`(?:${separator}|\\r?\\n|^)(?:"([^"]*)"|([^"${separator}\\r\\n]*))`, 'gi');
+                const row = [];
+                let matches;
+                while ((matches = regex.exec(lines[i]))) {
+                    let val = matches[1] || matches[2] || '';
+                    row.push(val.trim());
+                }
+                if (row.length > 5) result.push(row); // Garante que a linha tem dados
+            }
+            return result;
         }
 
         async function fetchData() {
             try {
                 const response = await fetch(SHEET_URL);
-                const data = await response.text();
-                
-                // --- CORREÇÃO IMPORTANTE: DETECTAR PONTO E VÍRGULA ---
-                // Verifica se a primeira linha tem mais ";" do que ","
-                const firstLine = data.split('\n')[0];
-                const useSemiColon = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length;
-                const delimiter = useSemiColon ? ';' : ',';
+                const text = await response.text();
+                const rows = parseCSV(text); // Usa o parser novo
 
-                // Remove cabeçalho e processa linhas
-                const rows = data.split('\n').slice(1);
-                
-                const leads = rows.map(row => {
-                    // Divide usando o delimitador correto (Regex para ignorar separador dentro de aspas)
-                    // Se for ponto e vírgula, usa ele. Se for vírgula, usa ela.
-                    let cols;
-                    if (useSemiColon) {
-                        cols = row.split(/;(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-                    } else {
-                        cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-                    }
-                    
-                    if(cols.length < 5) return null; // Linha inválida
+                const leads = rows.map(cols => {
+                    // 1. LÓGICA DE STATUS "INTELIGENTE" (Ignora Sem Resposta se tiver outro)
+                    let finalStatus = "SEM RESPOSTA";
+                    let foundMeaningful = false;
 
-                    // --- LÓGICA DAS 5 TENTATIVAS ---
-                    let currentStatus = "SEM RESPOSTA";
-                    for (let i = COL.TENTATIVA_END; i >= COL.TENTATIVA_START; i--) {
-                        if (cols[i] && cols[i].trim() !== "" && cols[i] !== "-") {
-                            currentStatus = cols[i].trim().toUpperCase();
-                            break; 
+                    // Varre todas as tentativas (L até P)
+                    // Prioridade: Se encontrar BANT4, PARTICIPOU ou CONTATADO, usa ele.
+                    // Se só encontrar SEM RESPOSTA, mantem SEM RESPOSTA.
+                    for (let i = COL.TENTATIVA_START; i <= COL.TENTATIVA_END; i++) {
+                        const val = (cols[i] || "").toUpperCase().trim();
+                        if (!val || val === "-" || val === "") continue;
+
+                        if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) {
+                            finalStatus = val; foundMeaningful = true; break; // Achou ouro, para aqui
+                        }
+                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) {
+                            finalStatus = val; foundMeaningful = true; // Guarda esse, mas continua procurando ouro
+                        }
+                        if (!foundMeaningful && !val.includes("SEM RESPOSTA")) {
+                            finalStatus = val; // Qualquer coisa diferente de "Sem Resposta" é melhor
                         }
                     }
 
-                    // --- LÓGICA DA CIDADE ---
+                    // 2. CIDADE
                     const rawCity = cols[COL.CIDADE] || "";
                     const cleanCity = rawCity.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    const coords = COORDENADAS[cleanCity] || null;
+                    const coords = COORDENADAS[cleanCity];
 
                     return {
                         data: cols[COL.DATA],
-                        nome: cols[COL.NOME],
                         cidade: rawCity,
-                        status: currentStatus,
+                        status: finalStatus,
                         lat: coords ? coords[0] : null,
                         lng: coords ? coords[1] : null
                     };
-                }).filter(i => i !== null);
+                });
 
                 updateDashboard(leads);
 
-            } catch (error) {
-                console.error("Erro:", error);
-                alert("Erro ao ler dados. Veja o console (F12).");
-            }
+            } catch (error) { console.error(error); alert("Erro ao carregar dados."); }
         }
 
         function updateDashboard(leads) {
-            // --- GRÁFICO 1: KPI BANT4 ---
-            const bant4Count = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
-            const outrosCount = leads.length - bant4Count;
-            
-            chartQualidade.data.datasets[0].data = [bant4Count, outrosCount];
+            // KPI BANT4
+            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO') || l.status.includes('FRANQUEADO')).length;
+            document.getElementById('kpi-bant').innerText = bant4;
+            chartQualidade.data.datasets[0].data = [bant4, leads.length - bant4];
             chartQualidade.update();
-            document.querySelector('.chart-center-text div').innerText = bant4Count;
 
-            // --- GRÁFICO 2: TOP 5 CIDADES ---
-            const cityCounts = {};
-            leads.forEach(l => {
-                if(l.cidade && l.cidade.length > 2) {
-                    cityCounts[l.cidade] = (cityCounts[l.cidade] || 0) + 1;
-                }
-            });
-            const topCities = Object.entries(cityCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            // CIDADES
+            const cityCount = {};
+            leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade] || 0) + 1; });
+            const topCities = Object.entries(cityCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
             chartCidades.data.labels = topCities.map(c => c[0]);
             chartCidades.data.datasets[0].data = topCities.map(c => c[1]);
             chartCidades.update();
 
-            // --- GRÁFICO 3: PIZZA (Participação LIVE) ---
+            // FUNIL
+            const contatado = leads.filter(l => l.status.includes('CONTATADO') || l.status.includes('AGENDADA') || l.status.includes('REUNIÃO')).length;
             const participou = leads.filter(l => l.status.includes('PARTICIPOU')).length;
-            const faltou = leads.filter(l => l.status.includes('FALTOU')).length;
-            const agendada = leads.filter(l => l.status.includes('AGENDADA')).length;
-            const semInfo = leads.length - (participou + faltou + agendada);
-
-            chartReuniao.data.datasets[0].data = [participou, semInfo, faltou]; 
-            chartReuniao.update();
-
-            // --- GRÁFICO 4: FUNIL DETALHADO ---
-            const contatado = leads.filter(l => l.status.includes('CONTATADO') || l.status.includes('RETORNAR')).length;
-            const semResposta = leads.filter(l => l.status.includes('SEM RESPOSTA') || l.status === "").length;
-            
-            chartLive.data.datasets[0].data = [semResposta, contatado, bant4Count, participou];
+            const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
+            chartLive.data.datasets[0].data = [semResp, contatado, bant4, participou];
             chartLive.update();
 
-            // --- MAPA (EXPANSÃO GEOGRÁFICA) ---
-            map.eachLayer((layer) => { if(layer.options && layer.options.icon) map.removeLayer(layer); });
+            // LIVE PIE
+            const faltou = leads.filter(l => l.status.includes('FALTOU')).length;
+            chartReuniao.data.datasets[0].data = [participou, leads.length - (participou+faltou), faltou];
+            chartReuniao.update();
 
+            // MAPA
+            map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
             leads.forEach(l => {
-                if(l.lat && l.lng) {
-                    L.marker([l.lat, l.lng], {
-                        icon: L.divIcon({ className: 'custom-pin', iconSize: [24, 24], iconAnchor: [12, 24] })
-                    }).addTo(map).bindPopup(`<b>${l.nome}</b><br>${l.cidade}<br>${l.status}`);
-                }
+                if(l.lat) L.marker([l.lat, l.lng], { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) })
+                .addTo(map).bindPopup(`<b>${l.cidade}</b><br>${l.status}`);
             });
 
-            // --- TIMELINES (LEADS E LIVES) ---
-            const leadsPorDia = {};
-            const livesPorDia = {};
-
-            leads.forEach(l => {
-                // Tenta extrair a data (pega DD/MM)
-                let dia = 'N/D';
-                if (l.data && l.data.length >= 5) {
-                    // Verifica se a data é algo tipo "02/01/2026"
-                    if(l.data.includes('/')) {
-                        dia = l.data.substring(0, 5);
-                    } else {
-                        dia = l.data.substring(0, 5);
-                    }
-                }
-                
-                leadsPorDia[dia] = (leadsPorDia[dia] || 0) + 1;
-
-                if (l.status.includes('LIVE') || l.status.includes('AGENDADA') || l.status.includes('PARTICIPOU') || l.status.includes('FALTOU')) {
-                    livesPorDia[dia] = (livesPorDia[dia] || 0) + 1;
-                }
-            });
-
-            const labelsDatas = Object.keys(leadsPorDia).sort();
-
-            chartLeadsTimeline.data.labels = labelsDatas;
-            chartLeadsTimeline.data.datasets[0].data = labelsDatas.map(d => leadsPorDia[d]);
+            // TIMELINE
+            const dates = {};
+            leads.forEach(l => { const d = l.data ? l.data.substring(0,5) : 'N/D'; dates[d] = (dates[d]||0)+1; });
+            const labels = Object.keys(dates).sort();
+            chartLeadsTimeline.data.labels = labels;
+            chartLeadsTimeline.data.datasets[0].data = labels.map(d => dates[d]);
             chartLeadsTimeline.update();
-
-            chartLivesTimeline.data.labels = labelsDatas;
-            chartLivesTimeline.data.datasets[0].data = labelsDatas.map(d => livesPorDia[d] || 0);
+            chartLivesTimeline.data.labels = labels; 
+            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]); // Exemplo: mesmo vol.
             chartLivesTimeline.update();
         }
 
-        // --- FUNÇÕES DE INICIALIZAÇÃO VISUAL ---
+        // --- INITS ---
         function initEmptyCharts() {
-            Chart.defaults.color = '#8c8c8c';
-            Chart.defaults.font.family = 'Inter';
-            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-
-            chartQualidade = new Chart(document.getElementById('chartQualidade'), {
-                type: 'doughnut',
-                data: { labels: ['Qualificados', 'Outros'], datasets: [{ data: [1, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0, borderRadius: 4 }] },
-                options: { cutout: '85%', plugins: { legend: { display: false } }, maintainAspectRatio: false }
-            });
-
-            const ctxCid = document.getElementById('chartCidades').getContext('2d');
-            const grad = ctxCid.createLinearGradient(0, 0, 0, 300);
-            grad.addColorStop(0, '#ff1f2d'); grad.addColorStop(1, '#600000');
-            chartCidades = new Chart(ctxCid, {
-                type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
-            });
-
-            chartReuniao = new Chart(document.getElementById('chartReuniao'), {
-                type: 'pie',
-                data: { labels: ['Participou', 'Sem Info', 'Faltou'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#00c853', '#333333', '#d32f2f'], borderWidth: 0 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
-            });
-
-            chartLive = new Chart(document.getElementById('chartLive'), {
-                type: 'bar', indexAxis: 'y',
-                data: { labels: ['SEM RESPOSTA', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4, barThickness: 20 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { display: false } } } }
-            });
-
-            const commonOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } };
-            
-            chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] },
-                options: commonOptions
-            });
-
-            chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), {
-                type: 'line',
-                data: { labels: [], datasets: [{ label: 'Interesse Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] },
-                options: commonOptions
-            });
+            Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+            chartQualidade = new Chart(document.getElementById('chartQualidade'), { type: 'doughnut', data: { labels: ['Qualif', 'Outros'], datasets: [{ data: [0, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
+            chartCidades = new Chart(document.getElementById('chartCidades'), { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: '#ff1f2d', borderRadius: 4 }] }, options: { plugins: { legend: { display: false } } } });
+            chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#333', '#d32f2f'], borderWidth: 0 }] } });
+            chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { plugins: { legend: { display: false } } } });
+            chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255,31,45,0.1)', fill: true }] }, options: { plugins: { legend: { display: false } } } });
+            chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255,215,0,0.1)', fill: true }] }, options: { plugins: { legend: { display: false } } } });
         }
-
-        function initMap() {
-            if(map) return;
-            map = L.map('map').setView([-14.2350, -51.9253], 4);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map);
-        }
-
-        function switchTab(targetId, btnId) {
-            document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active-section'));
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) { targetSection.style.display = 'block'; targetSection.classList.add('active-section'); }
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            const activeBtn = document.getElementById(btnId);
-            if (activeBtn) activeBtn.classList.add('active');
-            if(targetId === 'section-geo') setTimeout(() => { map.invalidateSize(); }, 200);
-        }
+        function initMap() { if(!map) { map = L.map('map').setView([-14.235, -51.925], 4); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}').addTo(map); } }
+        function switchTab(t, b) { document.querySelectorAll('.dashboard-section').forEach(e=>e.style.display='none'); document.getElementById(t).style.display='block'; if(t==='section-geo') setTimeout(()=>map.invalidateSize(), 200); }
     </script>
 </body>
 </html>

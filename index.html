@@ -38,7 +38,8 @@
         .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
         .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
         .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        
+        .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
+
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
@@ -113,12 +114,12 @@
                 </div>
                 <div class="grid">
                     <div class="card span-4">
-                        <span class="card-title">LEADS (BANT4)</span>
+                        <span class="card-title">STATUS DA BASE (COLUNA K)</span>
                         <div class="chart-wrapper">
                             <canvas id="chartQualidade"></canvas>
-                            <div class="chart-center-text"><div id="kpi-bant" style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div><div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div></div>
                         </div>
                     </div>
+
                     <div class="card span-8"><span class="card-title">Top 5 Cidades (Vol. Leads)</span><div style="height: 220px;"><canvas id="chartCidades"></canvas></div></div>
                     
                     <div class="card span-4 yellow-accent"><span class="card-title">PARTICIPAÇÃO LIVE</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
@@ -197,16 +198,11 @@
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
 
-        // --- FUNÇÃO PARA ATUALIZAR DATAS AUTOMATICAMENTE ---
         function updateDateLabels() {
             const now = new Date();
             const options = { month: 'long', year: 'numeric' };
             const currentMonthYear = now.toLocaleDateString('pt-BR', options).toUpperCase();
-            
-            // Atualiza Header
             document.getElementById('header-date').innerText = `Dados consolidados: ${currentMonthYear}`;
-            
-            // Atualiza Título do Gráfico de Leads
             const monthOnly = now.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
             document.getElementById('leads-title').innerText = `VOLUME DIÁRIO DE LEADS (${monthOnly})`;
         }
@@ -216,7 +212,7 @@
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-container').style.display = 'flex';
-                updateDateLabels(); // ATUALIZA DATA AO ENTRAR
+                updateDateLabels();
                 initCharts(); 
                 setTimeout(initMap, 200); 
                 fetchData();
@@ -284,6 +280,7 @@
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
+                    STATUS_K: 10, // COLUNA K (A=0, K=10)
                     STATUS_COLS: []
                 };
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
@@ -295,17 +292,24 @@
                 const leads = rowsLeads.slice(1).map(cols => {
                     if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
+                    // STATUS DO FUNIL GERAL (Tentativas)
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
                     for (let colIndex of IDX.STATUS_COLS) {
                         const val = (cols[colIndex] || "").toUpperCase().trim();
                         if (!val || val === "-" || val === "") continue;
                         if (val.includes("BANT") || val.includes("QUALIFICADO")) { finalStatus = val; foundMeaningful = true; break; }
-                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO") || val.includes("FALTOU")) { finalStatus = val; foundMeaningful = true; }
+                        if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) { finalStatus = val; foundMeaningful = true; }
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
+
+                    // STATUS ESPECÍFICO DA COLUNA K (ATIVO/INATIVO)
+                    let statusK = (cols[IDX.STATUS_K] || "").toUpperCase().trim();
+                    // Se estiver vazio na coluna K, considera ATIVO
+                    if (statusK === "") statusK = "ATIVO"; 
+
                     const rawCity = cols[IDX.CIDADE] || "";
-                    return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus };
+                    return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus, statusK: statusK };
                 }).filter(i => i !== null);
 
                 updateDashboard(leads, liveStats, liveTimeline);
@@ -313,11 +317,16 @@
         }
 
         function updateDashboard(leads, liveStats, liveTimeline) {
-            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
-            document.getElementById('kpi-bant').innerText = bant4;
-            chartQualidade.data.datasets[0].data = [bant4, leads.length - bant4];
+            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
+            const k_ativos = leads.filter(l => l.statusK === "ATIVO").length; // Vazio na planilha
+            const k_qualificados = leads.filter(l => l.statusK.includes("QUALIFICADO")).length;
+            const k_inativos = leads.filter(l => l.statusK.includes("INATIVO") || l.statusK.includes("DESATIVAR")).length;
+
+            // Cores: Ativo (Vermelho), Qualificado (Verde), Inativo (Cinza)
+            chartQualidade.data.datasets[0].data = [k_ativos, k_qualificados, k_inativos];
             chartQualidade.update();
 
+            // CIDADES
             const cityCount = {};
             leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade]||0)+1; });
             const topCities = Object.entries(cityCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -325,6 +334,7 @@
             chartCidades.data.datasets[0].data = topCities.map(c=>c[1]);
             chartCidades.update();
 
+            // PIE LIVE
             const totalLeads = leads.length;
             const processadosLive = liveStats.presente + liveStats.ausente;
             const semRespostaLive = totalLeads - processadosLive;
@@ -333,11 +343,14 @@
             chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaFinal, liveStats.ausente];
             chartReuniao.update();
 
+            // FUNIL GERAL
+            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             const contatado = leads.filter(l => l.status.includes('CONTATADO')).length;
             const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
             chartLive.data.datasets[0].data = [semResp, contatado, bant4, liveStats.presente];
             chartLive.update();
 
+            // TIMELINES
             const dates = {};
             leads.forEach(l => { const d = l.data.substring(0,5); dates[d] = (dates[d]||0)+1; });
             const labels = Object.keys(dates).sort();
@@ -350,6 +363,7 @@
             chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
             chartLivesTimeline.update();
 
+            // MAPA
             map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
             for(const [cidade, qtd] of Object.entries(cityCount)) {
                 const clean = cidade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -363,11 +377,32 @@
 
         function initCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-            chartQualidade = new Chart(document.getElementById('chartQualidade'), { type: 'doughnut', data: { datasets: [{ data: [0,1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } }, maintainAspectRatio: false } });
+            
+            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
+            chartQualidade = new Chart(document.getElementById('chartQualidade'), {
+                type: 'pie', 
+                data: { 
+                    labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'],
+                    datasets: [{ 
+                        data: [0, 0, 0], 
+                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], // Vermelho, Verde, Cinza
+                        borderWidth: 0 
+                    }] 
+                },
+                options: { 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } 
+                    } 
+                }
+            });
+
             const ctxCid = document.getElementById('chartCidades').getContext('2d');
             const grad = ctxCid.createLinearGradient(0,0,0,300); grad.addColorStop(0,'#ff1f2d'); grad.addColorStop(1,'#600000');
-            chartCidades = new Chart(ctxCid, { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } } });
+            chartCidades = new Chart(ctxCid, { type: 'bar', data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } } });
+            
             chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { labels: ['Presente', 'Sem Resposta', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#333', '#d32f2f'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
+            
             chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
             const commonLineOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } };
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });

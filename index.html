@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Final)</title>
+    <title>V4 | CVC Dashboard (Premium)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,50 +11,97 @@
 
     <style>
         :root {
-            --bg-main: #0a0a0a; --bg-secondary: #141414; --bg-tertiary: #1f1f1f; 
-            --text-bright: #ffffff; --text-muted: #8c8c8c;
-            --v4-neon-red: #ff1f2d; --v4-dark-red: #a30009;
-            --cvc-neon-yellow: #ffd700; --status-green: #00c853;
+            --bg-main: #0a0a0a; 
+            --bg-secondary: #141414; 
+            --bg-tertiary: #1f1f1f; 
+            --text-bright: #ffffff;
+            --text-muted: #8c8c8c;
+            --v4-neon-red: #ff1f2d; 
+            --v4-dark-red: #a30009;
+            --cvc-neon-yellow: #ffd700;
+            --status-green: #00c853;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-main); color: var(--text-bright); height: 100vh; overflow: hidden; }
 
-        /* LOGIN */
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%); transition: opacity 0.5s ease; }
-        .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
-        .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
-        .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- TELA DE LOGIN --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-main);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+            background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%);
+            transition: opacity 0.5s ease;
+        }
+
+        .login-box {
+            background: var(--bg-secondary); padding: 40px; border-radius: 24px;
+            width: 450px; text-align: center; border: 1px solid #2a2a2a;
+            box-shadow: 0 0 40px rgba(255, 31, 45, 0.15);
+            display: flex; flex-direction: column; align-items: center; 
+        }
+
+        .login-input {
+            width: 100%; padding: 15px; margin-bottom: 20px;
+            background: var(--bg-main); border: 1px solid #333; border-radius: 12px;
+            color: var(--text-bright); font-family: inherit; outline: none; transition: 0.3s;
+        }
+        .login-input:focus { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.3); }
+
+        .login-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red));
+            color: white; border: none; border-radius: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.3s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* DASHBOARD */
+        /* --- DASHBOARD --- */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
-        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; cursor: pointer; font-weight: 500; transition: 0.3s; }
+        
+        .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
         .nav-item.active { background: rgba(255, 31, 45, 0.1); color: var(--v4-neon-red); box-shadow: inset 3px 0 0 var(--v4-neon-red); }
+
         .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
+
         .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;}
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
-        
-        /* GRID & CARDS */
-        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
-        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12 { grid-column: span 12; }
+        .header p { color: var(--text-muted); font-size: 0.9rem;}
+
+        /* --- CARDS & GRID --- */
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
         .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 1px; }
-        
+
+        .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+        .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12{ grid-column: span 12;}
+
         .dashboard-section { display: none; animation: fadeIn 0.4s ease; }
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MAPA & CHART */
+        /* --- MAPA --- */
         .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
         .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
         .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
+        
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
         .leaflet-popup-tip { background: #141414; }
+        
+        /* --- TEXTO NO MEIO DO GRÁFICO --- */
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
     </style>
@@ -73,16 +120,20 @@
     </div>
 
     <div id="dashboard-container">
+        
         <aside class="sidebar">
             <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
                 <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="40" style="filter: invert(1);">
                 <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
             </div>
+
             <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase;">Analytics</div>
+            
             <div id="btn-overview" class="nav-item active" onclick="switchTab('section-overview', 'btn-overview')">Overview Geral</div>
             <div id="btn-leads" class="nav-item" onclick="switchTab('section-leads', 'btn-leads')">Performance de Leads</div>
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
+
             <div class="user-profile">
                 <img src="https://ui-avatars.com/api/?name=Admin+CVC&background=ff1f2d&color=fff" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
                 <div>
@@ -93,41 +144,105 @@
         </aside>
 
         <main class="main-content">
+            
             <div id="section-overview" class="dashboard-section active-section">
-                <div class="header"><h1>Visão Geral de Expansão</h1><p>Dados consolidados: JANEIRO 2026</p></div>
+                <div class="header">
+                    <h1>Visão Geral de Expansão</h1>
+                    <p>Dados consolidados: JANEIRO 2026</p>
+                </div>
+
                 <div class="grid">
                     <div class="card span-4">
                         <span class="card-title">LEADS (BANT4)</span>
                         <div class="chart-wrapper">
                             <canvas id="chartQualidade"></canvas>
-                            <div class="chart-center-text"><div id="kpi-bant" style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div><div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div></div>
+                            <div class="chart-center-text">
+                                <div id="kpi-bant" style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div>
+                                <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card span-8"><span class="card-title">Top 5 Cidades (Vol. Leads)</span><div style="height: 220px;"><canvas id="chartCidades"></canvas></div></div>
-                    <div class="card span-4 yellow-accent"><span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
-                    <div class="card span-8"><span class="card-title">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
+
+                    <div class="card span-8">
+                        <span class="card-title">Top 5 Cidades (Vol. Leads)</span>
+                        <div style="height: 220px;">
+                            <canvas id="chartCidades"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-4 yellow-accent">
+                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
+                        <div style="height: 200px;">
+                            <canvas id="chartReuniao"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="card span-8">
+                        <span class="card-title">STATUS DO FUNIL (Detalhado)</span>
+                        <div style="height: 200px;">
+                            <canvas id="chartLive"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div id="section-leads" class="dashboard-section">
-                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária de novos cadastros.</p></div>
-                <div class="grid"><div class="card span-12"><span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span><div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div></div></div>
+                <div class="header">
+                    <h1>Performance de Leads</h1>
+                    <p>Evolução diária de novos cadastros.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <span class="card-title">VOLUME DIÁRIO DE LEADS (JANEIRO)</span>
+                        <div style="height: 400px;">
+                            <canvas id="chartLeadsTimeline"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div id="section-geo" class="dashboard-section">
-                <div class="header"><h1>Expansão Geográfica</h1><p>Mapeamento das principais praças de interesse.</p></div>
-                <div class="grid"><div class="card span-12"><div id="map" class="map-container"></div></div></div>
+                <div class="header">
+                    <h1>Expansão Geográfica</h1>
+                    <p>Mapeamento das principais praças de interesse.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span class="card-title" style="margin:0;">Mapa Interativo</span>
+                            <div style="display: flex; gap: 15px; font-size: 0.75rem;">
+                                <span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px; height:10px; background: #ff1f2d; border-radius:50%;"></span> Lead Ativo</span>
+                            </div>
+                        </div>
+                        <div id="map" class="map-container"></div>
+                    </div>
+                </div>
             </div>
+            
             <div id="section-lives" class="dashboard-section">
-                <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live por dia.</p></div>
-                <div class="grid"><div class="card span-12"><span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
+                <div class="header">
+                    <h1>Relatório de Lives</h1>
+                    <p>Cadastros para a Live por dia.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span>
+                        <div style="height: 400px;">
+                            <canvas id="chartLivesTimeline"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
+
         </main>
     </div>
 
     <script>
-        // --- ⚠️ LINK ATUALIZADO COM SUCESSO ---
+        // --- 1. LINK DA SUA PLANILHA (ABA CERTA) ---
+        // Extraído do seu Iframe: gid=1787906905
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
 
-        // --- DICIONÁRIO DE CIDADES ---
+        // --- 2. COORDENADAS (CIDADES) ---
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
@@ -183,7 +298,7 @@
             }, 500);
         }
 
-        // PARSER CSV ROBUSTO (Resolve problema de vírgulas e ponto-e-vírgula)
+        // PARSER CSV ROBUSTO (Resolve problema de separadores)
         function parseCSV(text) {
             const lines = text.split('\n');
             const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
@@ -208,31 +323,31 @@
                 const text = await response.text();
                 const allRows = parseCSV(text); 
 
-                // DETECTOR DE COLUNAS (LÊ O CABEÇALHO SOZINHO)
+                // DETECTOR DE COLUNAS (Lê o cabeçalho)
                 const headers = allRows[0].map(h => h.toUpperCase().trim());
+                
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
                     STATUS_COLS: []
                 };
 
-                // Encontra colunas de TENTATIVA
+                // Encontra todas as colunas de TENTATIVA
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
 
-                // Se não achar, usa padrão (Fallback)
+                // Se não achar, usa padrão
                 if(IDX.DATA === -1) IDX.DATA = 0;
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                // TRAVA DE SEGURANÇA: Filtra linhas que não são dados de lead
+                // FILTRO DE LINHAS VÁLIDAS
                 const leads = allRows.slice(1).map(cols => {
                     if(cols.length < 5) return null;
                     
-                    // Verifica se a data parece uma data (contém números e /)
-                    // Isso evita pegar lixo ou cabeçalhos errados
+                    // Se a coluna Data não tem números, ignora (limpa sujeira)
                     if (!cols[IDX.DATA].match(/\d/)) return null;
 
-                    // LÓGICA DE STATUS: PROCURA OURO NAS TENTATIVAS
+                    // LÓGICA DE STATUS
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
 
@@ -263,7 +378,7 @@
                         lat: coords ? coords[0] : null,
                         lng: coords ? coords[1] : null
                     };
-                }).filter(i => i !== null); // Remove linhas ruins
+                }).filter(i => i !== null);
 
                 updateDashboard(leads);
 

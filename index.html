@@ -86,7 +86,27 @@
             <p style="color: #666; font-size: 0.9rem; margin-bottom: 30px;">Acesso Restrito - Franchise Intelligence</p>
             <input type="text" class="login-input" placeholder="ID do Usuário" value="cvc.admin">
             <input type="password" class="login-input" placeholder="Senha de Acesso" value="********">
-            <button class="login-btn" onclick="enterDashboard()">Entrar</button>
+            <button class="login-btn" onclick="enterDashboard(){
+            document.getElementById('login-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'flex';
+                
+                // 1. Inicia os Gráficos
+                initCharts(); 
+                
+                // 2. Inicia o Mapa IMEDIATAMENTE (Sem esperar 200ms)
+                // Isso garante que a variável 'map' exista quando os dados chegarem
+                initMap(); 
+                
+                // 3. Atualiza as datas
+                updateDateLabels();
+                
+                // 4. Busca os dados (Agora é seguro, pois o mapa já existe)
+                fetchData();
+            }, 500);
+        }
+                ">Entrar</button>
         </div>
     </div>
 
@@ -424,4 +444,5 @@
     </script>
 </body>
 </html>
+
 

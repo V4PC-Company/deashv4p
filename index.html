@@ -40,6 +40,7 @@
             display: flex; justify-content: center; align-items: center;
             z-index: 9999;
             background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%);
+            transition: opacity 0.5s ease;
         }
 
         .login-box {
@@ -48,8 +49,6 @@
             box-shadow: 0 0 40px rgba(255, 31, 45, 0.15);
             display: flex; flex-direction: column; align-items: center; 
         }
-
-        .login-logo { width: 80px; margin-bottom: 25px; filter: drop-shadow(0 0 10px var(--v4-neon-red)); }
 
         .login-input {
             width: 100%; padding: 15px; margin-bottom: 20px;
@@ -71,8 +70,6 @@
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
-        
-        .brand { display: flex; align-items: center; margin-bottom: 50px; gap: 15px; }
         
         .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
@@ -105,24 +102,9 @@
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; }
         .leaflet-popup-tip { background: #141414; }
         
-        /* --- CENTRALIZAÇÃO DO TEXTO NO GRÁFICO --- */
-        .chart-wrapper {
-            position: relative;
-            height: 220px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .chart-center-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            pointer-events: none;
-            z-index: 10;
-        }
+        /* --- TEXTO NO MEIO DO GRÁFICO --- */
+        .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -154,7 +136,7 @@
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
 
             <div class="user-profile">
-                <img src="data:image/webp;base64,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" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
+                <img src="data:image/webp;base64,UklGRv4FAABXRUJQVlA4IPIFAAAwHACdASpQAFAAPo00lkelIqIhMLscqKARiWwAuzmhfuX4zbDJ078YPZPqr9j/AXFNHy7N+TP31+oD7mfcA/RP/Vflj2gPMB+pn/O/5nvLel30Bv5//Yese9Av9tPS1/aj4MP2d/bT4Cf5l/Z/+jTsRYVTm+DtXboRlTid0gU6v/aeM36u9HHrC+hyrMYtnUhJe4BjEaqa1UbLwvkVmiXy/2ek7pWg707SMmWej0V9s+cqBLdjIlZmvXz6WIZwLumIVVFqomg7U4yZlpv0rSN8mBYwNxdWUJM7msSmXo2myJV/5p8882kh1AAA/vfUaxb5SH8pD8o8JKatfTIqOE2wu83zLnFD9pVyod42r6sdPPvPIDdECNGfgSrQYhDoAwYdZNUNaHpyNPDk3foX4ZJLOqJHMWP77/ZP+Qb9u7wu9pMAV4TyK1kqg/Wls9rBM7zwQzlaFd9AbzbBtd+u8Jss65/WslV6OqNeuJL1/oz3+E2yxnyEe+8YGbuze50Vk+Cv4JndpQqtMLgk8p1cg8/l+WXubnaCNGLyAn3wntxz6HfX0xCVdEeK0X1hPbVU1/pMOzuH1ltkDwpGfweeq9kV78d7Ggw+X63ArEl3ln2Rqc0TZf4/BXMY//JqSzUeKRoczeqTwrJQ/wVzy/JJD265aUOVitDzWBELmcmrwHoZclL4QRbO35WXMiXCsJ7nect168fxGjPdwBw1lI6EsDHUzXJTwOU0Pa4HfEM61CRmBv321R9Sb4BHoE8KmlSNjgAk+XGNAxYyM0CCmRP4GX3bbEyryeV9xodyY6Rz40DxtUfKRj4YyiT7lvNixJk0+Bv0KK45bE3oAw2qKojOAUHiBg0mk4Muj/S7cCjDayHd4DNF8OyaWjBdBA5vhjTVeuuH9BEhDQULmeBq02Y+innv6lHTAqVTQ+4sjuw2k9uYVDWZUFW4AJaEt4dSFFf6D3ZBbNgmu5xfnQaffdKkMyT87hnhvA5Ca4i3AS6wMJrEfb+vUoO01prq/vKvcenn54GahXaUh8b4BnsfIF+8do3uL2nVPKAPIYEVfGDT44/gUutsrWqDTKonyF0nj+Id4K4vkHhftm5upINFd//PRaRfROsaJbU26/FUo39iJdHssDZojodhxr7PRYYKV9LLGHaO46NAs2SYuwSN8OPL00L4DgBLuS1DfvFylsQes3UQHjrYK+az6UMOls5SOZrattP3pvjQo+CSiOXtG0jbmMv6Qr/oy1msSGKvAQk/zgH/JQ9WhfY+PNxqQ/ELAHJYyeL7TfFYIDm6xg1Sy/wcxx5zCrs0oHXOi5WltwH4nbgAhE2/BdN73cPk+psnvrAPxaEVIfenO3s0p5g4Vcw72nTg0D0cNjyCtfGG669qdf0uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
                 <div>
                     <div style="font-weight: 600; font-size: 0.9rem;">Admin CVC</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem;">Gestão</div>
@@ -176,7 +158,7 @@
                         <div class="chart-wrapper">
                             <canvas id="chartQualidade"></canvas>
                             <div class="chart-center-text">
-                                <div style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">19</div>
+                                <div style="font-size: 2.2rem; font-weight: 700; color: white; line-height: 1;">-</div>
                                 <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 5px;">Qualificados</div>
                             </div>
                         </div>
@@ -257,168 +239,276 @@
     </div>
 
     <script>
-        // --- 1. LÓGICA DE LOGIN & NAVEGAÇÃO ---
+        // --- 1. LINK DA PLANILHA ---
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?output=csv';
+
+        // --- 2. CONFIGURAÇÃO DAS COLUNAS (Baseado na sua Foto) ---
+        // A=0, B=1, C=2, D=3, E=4 ...
+        const COL = {
+            DATA: 0,       // Coluna A
+            NOME: 1,       // Coluna B
+            CIDADE: 4,     // Coluna E (Onde está a cidade para o mapa)
+            
+            // TENTATIVAS (Colunas L, M, N, O, P)
+            TENTATIVA_START: 11, // Coluna L (Tentativa 1)
+            TENTATIVA_END: 15    // Coluna P (Tentativa 5)
+        };
+
+        // --- 3. BANCO DE DADOS DE LATITUDE/LONGITUDE ---
+        // Como sua planilha não tem Lat/Lng, o código usa isso para achar a cidade no mapa.
+        const COORDENADAS = {
+            "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
+            "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
+            "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345],
+            "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919],
+            "salvador": [-12.9777, -38.5016],
+            "fortaleza": [-3.7172, -38.5434],
+            "curitiba": [-25.4284, -49.2733],
+            "manaus": [-3.1190, -60.0217],
+            "recife": [-8.0476, -34.8770],
+            "porto alegre": [-30.0346, -51.2177],
+            "goiania": [-16.6869, -49.2648],
+            "belem": [-1.4558, -48.4902],
+            "guarulhos": [-23.4515, -46.5333],
+            "campinas": [-22.9099, -47.0626],
+            "sao luis": [-2.5307, -44.3068],
+            "sao goncalo": [-22.8275, -43.0631],
+            "maceio": [-9.6662, -35.7351],
+            "duque de caxias": [-22.7923, -43.3108],
+            "campo grande": [-20.4697, -54.6201],
+            "natal": [-5.7945, -35.2110],
+            "teresina": [-5.0919, -42.8034],
+            "sao bernardo do campo": [-23.6914, -46.5646],
+            "joao pessoa": [-7.1195, -34.8450],
+            "nova iguacu": [-22.7561, -43.4607],
+            "santo andre": [-23.6638, -46.5383],
+            "osasco": [-23.5336, -46.7920],
+            "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009],
+            "jaboatao dos guararapes": [-8.1782, -35.0354],
+            "ribeirao preto": [-21.1704, -47.8103],
+            "uberlandia": [-18.9113, -48.2622],
+            "contagem": [-19.9326, -44.0538],
+            "sorocaba": [-23.5015, -47.4521],
+            "aracaju": [-10.9472, -37.0731],
+            "cuiaba": [-15.6014, -56.0979],
+            "vitoria": [-20.3155, -40.3128],
+            "juiz de fora": [-21.7661, -43.3503],
+            "londrina": [-23.3045, -51.1696],
+            "niteroi": [-22.8808, -43.1043],
+            "florianopolis": [-27.5954, -48.5480]
+        };
+
+        // --- VARIÁVEIS GLOBAIS ---
+        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline;
+        let map;
+
+        // --- 4. INICIALIZAÇÃO ---
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-container').style.display = 'flex';
-                initCharts(); 
-                setTimeout(initMap, 200); 
+                initEmptyCharts();
+                initMap();
+                fetchData();
             }, 500);
+        }
+
+        async function fetchData() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+                
+                // Remove cabeçalho e processa linhas
+                const rows = data.split('\n').slice(1);
+                
+                const leads = rows.map(row => {
+                    // Separa colunas (considerando vírgulas dentro de aspas se houver)
+                    const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                    
+                    if(cols.length < 5) return null; // Linha inválida
+
+                    // --- LÓGICA DAS 5 TENTATIVAS ---
+                    // Varre da coluna P (15) até a L (11). O primeiro valor encontrado é o status atual.
+                    let currentStatus = "SEM RESPOSTA"; // Valor padrão
+                    for (let i = COL.TENTATIVA_END; i >= COL.TENTATIVA_START; i--) {
+                        if (cols[i] && cols[i].trim() !== "" && cols[i] !== "-") {
+                            currentStatus = cols[i].trim().toUpperCase();
+                            break; 
+                        }
+                    }
+
+                    // --- LÓGICA DA CIDADE ---
+                    const rawCity = cols[COL.CIDADE] || "";
+                    // Remove acentos e deixa minúsculo para buscar no dicionário (Ex: "São Paulo" -> "sao paulo")
+                    const cleanCity = rawCity.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                    const coords = COORDENADAS[cleanCity] || null;
+
+                    return {
+                        data: cols[COL.DATA],
+                        nome: cols[COL.NOME],
+                        cidade: rawCity,
+                        status: currentStatus,
+                        lat: coords ? coords[0] : null,
+                        lng: coords ? coords[1] : null
+                    };
+                }).filter(i => i !== null);
+
+                updateDashboard(leads);
+
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Erro ao ler dados. Veja o console (F12).");
+            }
+        }
+
+        function updateDashboard(leads) {
+            // --- GRÁFICO 1: KPI BANT4 ---
+            // Verifica se o status atual contém "BANT" ou "QUALIFICADO"
+            const bant4Count = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
+            const outrosCount = leads.length - bant4Count;
+            
+            chartQualidade.data.datasets[0].data = [bant4Count, outrosCount];
+            chartQualidade.update();
+            document.querySelector('.chart-center-text div').innerText = bant4Count;
+
+            // --- GRÁFICO 2: TOP 5 CIDADES ---
+            const cityCounts = {};
+            leads.forEach(l => {
+                if(l.cidade && l.cidade.length > 2) {
+                    cityCounts[l.cidade] = (cityCounts[l.cidade] || 0) + 1;
+                }
+            });
+            const topCities = Object.entries(cityCounts).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            chartCidades.data.labels = topCities.map(c => c[0]);
+            chartCidades.data.datasets[0].data = topCities.map(c => c[1]);
+            chartCidades.update();
+
+            // --- GRÁFICO 3: PIZZA (Participação LIVE) ---
+            // Baseado nos seus status: "PARTICIPOU DA LIVE", "FALTOU NA LIVE", "LIVE AGENDADA"
+            const participou = leads.filter(l => l.status.includes('PARTICIPOU')).length;
+            const faltou = leads.filter(l => l.status.includes('FALTOU')).length;
+            const agendada = leads.filter(l => l.status.includes('AGENDADA')).length;
+            // Todo o resto
+            const semInfo = leads.length - (participou + faltou + agendada);
+
+            chartReuniao.data.datasets[0].data = [participou, semInfo, faltou]; // Ordem: Verde, Cinza, Vermelho
+            chartReuniao.update();
+
+            // --- GRÁFICO 4: FUNIL DETALHADO ---
+            const contatado = leads.filter(l => l.status.includes('CONTATADO') || l.status.includes('RETORNAR')).length;
+            const semResposta = leads.filter(l => l.status.includes('SEM RESPOSTA') || l.status === "").length;
+            
+            chartLive.data.datasets[0].data = [semResposta, contatado, bant4Count, participou];
+            chartLive.update();
+
+            // --- MAPA (EXPANSÃO GEOGRÁFICA) ---
+            // Limpa pinos antigos
+            map.eachLayer((layer) => { if(layer.options && layer.options.icon) map.removeLayer(layer); });
+
+            leads.forEach(l => {
+                if(l.lat && l.lng) {
+                    L.marker([l.lat, l.lng], {
+                        icon: L.divIcon({ className: 'custom-pin', iconSize: [24, 24], iconAnchor: [12, 24] })
+                    }).addTo(map).bindPopup(`<b>${l.nome}</b><br>${l.cidade}<br>${l.status}`);
+                }
+            });
+
+            // --- TIMELINES (LEADS E LIVES) ---
+            // Agrupar por data (Coluna A). Formato esperado "DD/MM/YYYY..."
+            const leadsPorDia = {};
+            const livesPorDia = {};
+
+            leads.forEach(l => {
+                // Pega só os 5 primeiros caracteres da data (DD/MM)
+                const dia = l.data ? l.data.substring(0, 5) : 'N/D';
+                
+                // Contagem Geral (Leads)
+                leadsPorDia[dia] = (leadsPorDia[dia] || 0) + 1;
+
+                // Contagem Lives (Só quem tem status de Live)
+                if (l.status.includes('LIVE') || l.status.includes('AGENDADA') || l.status.includes('PARTICIPOU') || l.status.includes('FALTOU')) {
+                    livesPorDia[dia] = (livesPorDia[dia] || 0) + 1;
+                }
+            });
+
+            // Ordena datas
+            const labelsDatas = Object.keys(leadsPorDia).sort();
+
+            // Atualiza Gráfico de Leads
+            chartLeadsTimeline.data.labels = labelsDatas;
+            chartLeadsTimeline.data.datasets[0].data = labelsDatas.map(d => leadsPorDia[d]);
+            chartLeadsTimeline.update();
+
+            // Atualiza Gráfico de Lives
+            chartLivesTimeline.data.labels = labelsDatas;
+            chartLivesTimeline.data.datasets[0].data = labelsDatas.map(d => livesPorDia[d] || 0);
+            chartLivesTimeline.update();
+        }
+
+        // --- FUNÇÕES DE INICIALIZAÇÃO VISUAL (Não mexer) ---
+        function initEmptyCharts() {
+            Chart.defaults.color = '#8c8c8c';
+            Chart.defaults.font.family = 'Inter';
+            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+
+            chartQualidade = new Chart(document.getElementById('chartQualidade'), {
+                type: 'doughnut',
+                data: { labels: ['Qualificados', 'Outros'], datasets: [{ data: [1, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0, borderRadius: 4 }] },
+                options: { cutout: '85%', plugins: { legend: { display: false } }, maintainAspectRatio: false }
+            });
+
+            const ctxCid = document.getElementById('chartCidades').getContext('2d');
+            const grad = ctxCid.createLinearGradient(0, 0, 0, 300);
+            grad.addColorStop(0, '#ff1f2d'); grad.addColorStop(1, '#600000');
+            chartCidades = new Chart(ctxCid, {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
+            });
+
+            chartReuniao = new Chart(document.getElementById('chartReuniao'), {
+                type: 'pie',
+                data: { labels: ['Participou', 'Sem Info', 'Faltou'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#00c853', '#333333', '#d32f2f'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
+            });
+
+            chartLive = new Chart(document.getElementById('chartLive'), {
+                type: 'bar', indexAxis: 'y',
+                data: { labels: ['SEM RESPOSTA', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4, barThickness: 20 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { display: false } } } }
+            });
+
+            const commonOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } };
+            
+            chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] },
+                options: commonOptions
+            });
+
+            chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), {
+                type: 'line',
+                data: { labels: [], datasets: [{ label: 'Interesse Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] },
+                options: commonOptions
+            });
+        }
+
+        function initMap() {
+            if(map) return;
+            map = L.map('map').setView([-14.2350, -51.9253], 4);
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map);
         }
 
         function switchTab(targetId, btnId) {
             document.querySelectorAll('.dashboard-section').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.dashboard-section').forEach(el => el.classList.remove('active-section'));
-            
             const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                targetSection.style.display = 'block';
-                targetSection.classList.add('active-section');
-            }
-
+            if (targetSection) { targetSection.style.display = 'block'; targetSection.classList.add('active-section'); }
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             const activeBtn = document.getElementById(btnId);
             if (activeBtn) activeBtn.classList.add('active');
-
             if(targetId === 'section-geo') setTimeout(() => { map.invalidateSize(); }, 200);
-        }
-
-        // --- 2. MAPA ---
-        var map;
-        function initMap() {
-            if(map) return;
-            map = L.map('map').setView([-14.2350, -51.9253], 4);
-            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' }).addTo(map);
-
-            var pinIcon = L.divIcon({ className: 'custom-pin', iconSize: [24, 24], iconAnchor: [12, 24], popupAnchor: [0, -28] });
-
-            const cities = [
-                {n: "São Paulo", lat: -23.5505, lng: -46.6333, q: 20},
-                {n: "Fortaleza", lat: -3.7172, lng: -38.5434, q: 3},
-                {n: "Belo Horizonte", lat: -19.9167, lng: -43.9345, q: 3},
-                {n: "Campo Grande", lat: -20.4697, lng: -54.6201, q: 3},
-                {n: "S. José dos Campos", lat: -23.2237, lng: -45.9009, q: 2},
-                {n: "Rio de Janeiro", lat: -22.9068, lng: -43.1729, q: 1},
-                {n: "Salvador", lat: -12.9777, lng: -38.5016, q: 1},
-                {n: "Brasília", lat: -15.7975, lng: -47.8919, q: 1},
-                {n: "Curitiba", lat: -25.4284, lng: -49.2733, q: 1},
-                {n: "Recife", lat: -8.0476, lng: -34.8770, q: 1},
-                {n: "Porto Alegre", lat: -30.0346, lng: -51.2177, q: 1}
-            ];
-
-            cities.forEach(c => {
-                L.marker([c.lat, c.lng], {icon: pinIcon}).addTo(map).bindPopup(`<b>${c.n}</b><br>${c.q} Leads`);
-            });
-        }
-
-        // --- 3. GRÁFICOS ---
-        function initCharts() {
-            Chart.defaults.color = '#8c8c8c';
-            Chart.defaults.font.family = 'Inter';
-            Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-
-            // OVERVIEW - AJUSTADO PARA 19 LEADS
-            new Chart(document.getElementById('chartQualidade'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['BANT4', 'Não qualificados'],
-                    datasets: [{ 
-                        data: [19, 192], // 19 qualificados de um total fictício para manter a proporção visual
-                        backgroundColor: ['#ff1f2d', '#1f1f1f'], 
-                        borderWidth: 0, 
-                        borderRadius: 4 
-                    }]
-                },
-                options: { cutout: '85%', plugins: { legend: { display: false } }, responsive: true, maintainAspectRatio: false }
-            });
-
-            const ctxCidades = document.getElementById('chartCidades').getContext('2d');
-            const gradient = ctxCidades.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, '#ff1f2d'); gradient.addColorStop(1, '#600000');
-            new Chart(ctxCidades, {
-                type: 'bar',
-                data: {
-                    labels: ['SP', 'Fortaleza', 'BH', 'Campo Grande', 'SJC'],
-                    datasets: [{ label: 'Volume', data: [20, 3, 3, 3, 2], backgroundColor: gradient, borderRadius: 6, barThickness: 25 }]
-                },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } }
-            });
-
-            new Chart(document.getElementById('chartReuniao'), {
-                type: 'pie',
-                data: {
-                    labels: ['Presente', 'Sem Resposta', 'Ausente'],
-                    datasets: [{ data: [8, 101, 12], backgroundColor: ['#00c853', '#333333', '#d32f2f'], borderWidth: 0 }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true } } } }
-            });
-
-            new Chart(document.getElementById('chartLive'), {
-                type: 'bar',
-                indexAxis: 'y',
-                data: {
-                    labels: ['SEM RESPOSTA', 'CONTATADO', 'BANT4', 'PARTICIPOU'],
-                    datasets: [{
-                        label: 'Leads', data: [79, 22, 12, 1],
-                        backgroundColor: (ctx) => {
-                             const l = ctx.chart.data.labels[ctx.dataIndex];
-                             if(l === 'PARTICIPOU' || l === 'BANT4') return '#00c853';
-                             if(l === 'CONTATADO') return '#ffd700';
-                             return '#ff1f2d';
-                        },
-                        borderRadius: 4, barThickness: 15
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { display: false } } } }
-            });
-
-            // PERFORMANCE DE LEADS
-            new Chart(document.getElementById('chartLeadsTimeline'), {
-                type: 'line',
-                data: {
-                    labels: ['02/jan', '03/jan', '04/jan', '05/jan', '06/jan', '07/jan', '08/jan', '09/jan', '10/jan'],
-                    datasets: [{
-                        label: 'Novos Leads',
-                        data: [14, 10, 12, 21, 10, 8, 9, 8, 10], 
-                        borderColor: '#ff1f2d',
-                        backgroundColor: 'rgba(255, 31, 45, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#ff1f2d'
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } }
-                }
-            });
-
-            // RELATÓRIO DE LIVES
-            new Chart(document.getElementById('chartLivesTimeline'), {
-                type: 'line',
-                data: {
-                    labels: ['02/jan', '03/jan', '04/jan', '05/jan', '06/jan', '07/jan', '08/jan', '09/jan', '10/jan'],
-                    datasets: [{
-                        label: 'Cadastros para Live',
-                        data: [14, 10, 12, 21, 10, 8, 9, 8, 10], 
-                        borderColor: '#ffd700', 
-                        backgroundColor: 'rgba(255, 215, 0, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#ffd700'
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } }
-                }
-            });
         }
     </script>
 </body>

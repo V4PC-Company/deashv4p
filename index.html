@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>V4 | CVC Dashboard (Premium)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        /* --- DESIGN ORIGINAL (DARK NEON PREMIUM) --- */
+        /* --- DESIGN ORIGINAL (DARK NEON V4) --- */
         :root {
             --bg-main: #0a0a0a; 
             --bg-secondary: #141414; 
             --bg-tertiary: #1f1f1f; 
             --text-bright: #ffffff;
             --text-muted: #8c8c8c;
-            --v4-neon-red: #ff1f2d; 
+            --v4-neon-red: #ff1f2d; /* Vermelho V4 */
             --v4-dark-red: #a30009;
             --cvc-neon-yellow: #ffd700;
             --status-green: #00c853;
@@ -33,7 +34,7 @@
             overflow: hidden;
         }
 
-        /* TELA DE LOGIN */
+        /* --- TELA DE LOGIN --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-main);
@@ -66,13 +67,15 @@
         }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* DASHBOARD LAYOUT */
+        /* --- DASHBOARD LAYOUT --- */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
         
+        /* Menu Lateral */
         .nav-item { display: flex; align-items: center; padding: 12px 15px; color: var(--text-muted); border-radius: 12px; margin-bottom: 8px; transition: 0.3s; cursor: pointer; font-weight: 500; user-select: none; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.05); color: white; }
+        /* Botão Ativo Vermelho V4 */
         .nav-item.active { background: rgba(255, 31, 45, 0.1); color: var(--v4-neon-red); box-shadow: inset 3px 0 0 var(--v4-neon-red); }
 
         .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
@@ -81,10 +84,13 @@
         .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
         .header p { color: var(--text-muted); font-size: 0.9rem;}
 
-        /* CARDS & GRID */
+        /* --- CARDS & GRID --- */
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
+        /* Borda Vermelha no Topo dos Cards */
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
+        /* Exceção para Card Amarelo (Lives) */
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
+        
         .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 1px; }
 
         .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
@@ -94,8 +100,9 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MAPA */
+        /* --- MAPA --- */
         .map-container { width: 100%; height: 500px; background-color: #e5e5e5; border-radius: 16px; border: 1px solid #333; z-index: 1; }
+        /* Pino Vermelho V4 */
         .custom-pin { background-color: var(--v4-neon-red); width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; justify-content: center; align-items: center; border: 2px solid white; box-shadow: 0 4px 5px rgba(0,0,0,0.5); }
         .custom-pin::after { content: ''; width: 6px; height: 6px; background: white; border-radius: 50%; }
         
@@ -105,13 +112,7 @@
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
 
-        /* MONITOR DE ERROS (Opcional, pode remover se quiser) */
-        #error-display {
-            display: none; position: fixed; bottom: 20px; right: 20px;
-            background: #a30009; color: white; padding: 20px;
-            border-radius: 10px; z-index: 10000; max-width: 400px;
-            font-size: 0.9rem; border: 1px solid #ff1f2d;
-        }
+        #error-display { display: none; position: fixed; bottom: 20px; right: 20px; background: #a30009; color: white; padding: 20px; border-radius: 10px; z-index: 10000; max-width: 400px; font-size: 0.9rem; border: 1px solid #ff1f2d; }
     </style>
 </head>
 <body>
@@ -145,7 +146,7 @@
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
 
             <div class="user-profile">
-                <img src="https://ui-avatars.com/api/?name=Admin+CVC&background=ff1f2d&color=fff" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
+                <img src="https://ui-avatars.com/api/?name=Admin+CVC&background=ffd700&color=000" width="45" style="border-radius: 50%; background: #fff; padding: 2px;">
                 <div>
                     <div style="font-weight: 600; font-size: 0.9rem;">Admin CVC</div>
                     <div style="color: var(--text-muted); font-size: 0.75rem;">Gestão</div>
@@ -158,7 +159,7 @@
             <div id="section-overview" class="dashboard-section active-section">
                 <div class="header">
                     <h1>Visão Geral de Expansão</h1>
-                    <p>Dados consolidados: 2026</p>
+                    <p>Dados consolidados: JANEIRO 2026</p>
                 </div>
 
                 <div class="grid">
@@ -181,7 +182,7 @@
                     </div>
 
                     <div class="card span-4 yellow-accent">
-                        <span class="card-title">PARTICIPAÇÃO LIVE (GERAL)</span>
+                        <span class="card-title">PARTICIPAÇÃO LIVE (JAN 26)</span>
                         <div style="height: 200px;">
                             <canvas id="chartReuniao"></canvas>
                         </div>
@@ -248,7 +249,7 @@
     </div>
 
     <script>
-        // --- LINK CORRETO DA PLANILHA (CSV) ---
+        // --- LINK DA PLANILHA (CSV) ---
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
 
         // --- COORDENADAS ---
@@ -334,11 +335,11 @@
         async function fetchData() {
             try {
                 const response = await fetch(SHEET_URL);
-                if(!response.ok) throw new Error("Falha na conexão com o Google Sheets (Erro " + response.status + ")");
+                if(!response.ok) throw new Error("Falha na conexão com o Google Sheets");
                 const text = await response.text();
                 
                 if(text.trim().startsWith("<!DOCTYPE")) {
-                    showError("O link da planilha não é um CSV válido. Verifique se publicou como CSV.");
+                    showError("O link da planilha não é um CSV válido.");
                     return;
                 }
 
@@ -357,7 +358,6 @@
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                // FILTRAGEM
                 const leads = allRows.slice(1).map(cols => {
                     if(cols.length < 5) return null;
                     if (!cols[IDX.DATA].match(/\d/)) return null; 
@@ -373,21 +373,14 @@
                     }
 
                     const rawCity = cols[IDX.CIDADE] || "";
-                    const cleanCity = rawCity.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     
                     return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus };
                 }).filter(i => i !== null);
 
-                if(leads.length === 0) {
-                    showError("Nenhum dado encontrado na aba selecionada.");
-                } else {
-                    updateDashboard(leads);
-                }
+                if(leads.length === 0) showError("Nenhum dado encontrado na aba selecionada.");
+                else updateDashboard(leads);
 
-            } catch (error) { 
-                console.error(error); 
-                showError(error.message + "<br>Verifique se a planilha está publicada na web (não restrita)."); 
-            }
+            } catch (error) { console.error(error); showError(error.message); }
         }
 
         function updateDashboard(leads) {
@@ -397,12 +390,12 @@
             chartQualidade.data.datasets[0].data = [bant4, leads.length - bant4];
             chartQualidade.update();
 
-            // CIDADES (Gráfico de Barras e Contagem para o Mapa)
+            // CIDADES (AGRUPAR)
             const cityCount = {};
             leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade] || 0) + 1; });
-            
-            // Atualiza Gráfico de Cidades
             const topCities = Object.entries(cityCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            
+            // GRÁFICO CIDADES (VERMELHO)
             chartCidades.data.labels = topCities.map(c => c[0]);
             chartCidades.data.datasets[0].data = topCities.map(c => c[1]);
             chartCidades.update();
@@ -419,16 +412,17 @@
             chartReuniao.data.datasets[0].data = [participou, leads.length - (participou+faltou), faltou];
             chartReuniao.update();
 
-            // --- MAPA (AGORA MOSTRA QUANTIDADE POR CIDADE) ---
+            // --- MAPA CORRIGIDO: AGRUPAR POR CIDADE ---
             map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
             
             for (const [cidadeName, count] of Object.entries(cityCount)) {
                 const cleanName = cidadeName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 const coords = COORDENADAS[cleanName];
+                
                 if (coords) {
                     L.marker(coords, { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) })
                      .addTo(map)
-                     .bindPopup(`<b>${cidadeName}</b><br>${count} Leads`);
+                     .bindPopup(`<b>${cidadeName}</b><br>${count} Leads`); // Exibe quantidade
                 }
             }
 
@@ -440,21 +434,37 @@
                 dates[d] = (dates[d]||0)+1; 
             });
             const labels = Object.keys(dates).sort();
+            
+            // Timeline Leads (Vermelho)
             chartLeadsTimeline.data.labels = labels;
             chartLeadsTimeline.data.datasets[0].data = labels.map(d => dates[d]);
             chartLeadsTimeline.update();
+            
+            // Timeline Lives (Amarelo)
             chartLivesTimeline.data.labels = labels; 
-            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]);
+            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]); // Lógica simples por enquanto
             chartLivesTimeline.update();
         }
 
         function initEmptyCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+            
+            // KPI (Vermelho)
             chartQualidade = new Chart(document.getElementById('chartQualidade'), { type: 'doughnut', data: { labels: ['Qualif', 'Outros'], datasets: [{ data: [0, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });
+            
+            // Cidades (Vermelho)
             chartCidades = new Chart(document.getElementById('chartCidades'), { type: 'bar', data: { labels: [], datasets: [{ data: [], backgroundColor: '#ff1f2d', borderRadius: 4 }] }, options: { plugins: { legend: { display: false } } } });
+            
+            // Pizza (Verde e Vermelho)
             chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#333', '#d32f2f'], borderWidth: 0 }] } });
+            
+            // Funil (Colorido)
             chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { plugins: { legend: { display: false } } } });
+            
+            // Timeline Leads (Vermelho)
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255,31,45,0.1)', fill: true }] }, options: { plugins: { legend: { display: false } } } });
+            
+            // Timeline Lives (Amarelo)
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255,215,0,0.1)', fill: true }] }, options: { plugins: { legend: { display: false } } } });
         }
         function initMap() { if(!map) { map = L.map('map').setView([-14.235, -51.925], 4); L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}').addTo(map); } }

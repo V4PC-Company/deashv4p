@@ -44,7 +44,7 @@
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); position: relative; }
         
-        /* FILTRO FLUTUANTE (FIXO NO TOPO DIREITO) */
+        /* FILTRO DE MÊS (FLUTUANTE NO TOPO) */
         .top-right-filter { position: absolute; top: 35px; right: 40px; z-index: 1000; }
         .month-selector {
             background: var(--bg-secondary);
@@ -58,6 +58,8 @@
             outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: 600;
         }
         .month-selector:hover { border-color: var(--v4-neon-red); box-shadow: 0 0 10px rgba(255, 31, 45, 0.2); }
 
@@ -73,6 +75,7 @@
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
         .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; letter-spacing: 1px; }
         
+        /* CABEÇALHO DO CARD BANT4 */
         .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .mini-badge { background-color: var(--v4-neon-red); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 5px rgba(255, 31, 45, 0.3); border: 1px solid rgba(255,255,255,0.2); }
 
@@ -110,7 +113,7 @@
     <div id="dashboard-container">
         <aside class="sidebar">
             <div style="display: flex; align-items: center; margin-bottom: 50px; gap: 15px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/906/906343.png" width="40" style="filter: invert(1);">
+                <img src="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" width="40" style="filter: invert(1);">
                 <span style="font-weight: 700; font-size: 1rem; letter-spacing: 0.5px;">V4 PLACERES</span> 
             </div>
             <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 15px; text-transform: uppercase;">Analytics</div>
@@ -139,7 +142,6 @@
                     <h1>Visão Geral de Expansão</h1>
                     <p id="header-date">Dados consolidados: CARREGANDO...</p>
                 </div>
-
                 <div class="grid">
                     <div class="card span-4">
                         <div class="card-header-flex">
@@ -177,7 +179,6 @@
     </div>
 
     <script>
-        // CONFIG LINKS
         const LEADS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
         const LIVE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8KWWCjb7eYtXhLEpsgxgRI7wurO2HqO0YLcoSAKxkdLTuVGNiQ86HRMz5AKLaIJbnckxl9P4d6TJP/pub?gid=859560778&single=true&output=csv';
 
@@ -231,21 +232,11 @@
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
 
-        function updateDateLabels() {
-            const now = new Date();
-            const options = { month: 'long', year: 'numeric' };
-            const currentMonthYear = now.toLocaleDateString('pt-BR', options).toUpperCase();
-            document.getElementById('header-date').innerText = `Dados consolidados: ${currentMonthYear}`;
-            const monthOnly = now.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
-            document.getElementById('leads-title').innerText = `VOLUME DIÁRIO DE LEADS (${monthOnly})`;
-        }
-
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-container').style.display = 'flex';
-                updateDateLabels();
                 initCharts(); 
                 setTimeout(initMap, 200); 
                 fetchData();
@@ -341,7 +332,7 @@
 
                     const rawCity = cols[IDX.CIDADE] || "";
                     const dateParts = cols[IDX.DATA].split('/');
-                    const monthYear = `${dateParts[1]}/${dateParts[2]}`;
+                    const monthYear = `${dateParts[1]}/${dateParts[2]}`; // MM/YYYY
 
                     return { 
                         data: cols[IDX.DATA], 
@@ -358,22 +349,25 @@
         }
 
         function setupMonthFilter() {
+            // Extrai meses únicos e ordena
             const uniqueMonths = [...new Set(GLOBAL_LEADS.map(l => l.monthYear))];
             uniqueMonths.sort((a,b) => {
                 const [mA, yA] = a.split('/');
                 const [mB, yB] = b.split('/');
-                return new Date(yB, mB) - new Date(yA, mA); 
+                return new Date(yB, mB) - new Date(yA, mA); // Decrescente
             });
 
             const selector = document.getElementById('month-filter');
             selector.innerHTML = '';
             
+            // Define Mês Atual
             const today = new Date();
             const currentMonthStr = String(today.getMonth() + 1).padStart(2, '0') + '/' + today.getFullYear();
             
             uniqueMonths.forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m;
+                // Formatação: "JANEIRO 2026"
                 const [mm, yyyy] = m.split('/');
                 const dateObj = new Date(yyyy, mm - 1);
                 const monthName = dateObj.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
@@ -381,6 +375,7 @@
                 selector.appendChild(opt);
             });
 
+            // Seleciona mês atual ou o primeiro da lista
             if(uniqueMonths.includes(currentMonthStr)) {
                 selector.value = currentMonthStr;
             } else if (uniqueMonths.length > 0) {
@@ -405,17 +400,17 @@
                     if (ls.date && ls.date.includes(selectedMonthYear)) { 
                         if(ls.status === 'presente') filteredLiveStats.presente++;
                         if(ls.status === 'ausente') filteredLiveStats.ausente++;
-                        
                         const dayMonth = ls.date.substring(0, 5); 
                         filteredLiveTimeline[dayMonth] = (filteredLiveTimeline[dayMonth] || 0) + 1;
                     }
                 });
             }
 
-            // ATUALIZA O TÍTULO AUTOMATICAMENTE COM O MÊS SELECIONADO
+            // ATUALIZA TÍTULOS
             const [selMM, selYYYY] = selectedMonthYear.split('/');
             const selDateObj = new Date(selYYYY, selMM - 1);
             const selMonthName = selDateObj.toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+            
             document.getElementById('header-date').innerText = `Dados consolidados: ${selMonthName} ${selYYYY}`;
             document.getElementById('leads-title').innerText = `VOLUME DIÁRIO DE LEADS (${selMonthName})`;
 
@@ -423,14 +418,14 @@
         }
 
         function updateDashboard(leads, liveStats, liveTimeline) {
-            // GRÁFICO 1
+            // GRÁFICO 1: STATUS DA BASE
             const k_ativos = leads.filter(l => l.statusK === "ATIVO").length;
             const k_qualificados = leads.filter(l => l.statusK.includes("QUALIFICADO")).length;
             const k_inativos = leads.filter(l => l.statusK.includes("INATIVO") || l.statusK.includes("DESATIVAR")).length;
             chartQualidade.data.datasets[0].data = [k_ativos, k_qualificados, k_inativos];
             chartQualidade.update();
 
-            // BANT4 Badge
+            // BADGE BANT4
             const bant4_total = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             document.getElementById('kpi-bant-mini').innerText = `${bant4_total} BANT4`;
 
@@ -447,7 +442,6 @@
             const processadosLive = liveStats.presente + liveStats.ausente;
             let semRespostaLive = totalLeads - processadosLive;
             if(semRespostaLive < 0) semRespostaLive = 0; 
-
             chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaLive, liveStats.ausente];
             chartReuniao.update();
 
@@ -465,6 +459,7 @@
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
+            // LIVE TIMELINE
             const liveKeys = Object.keys(liveTimeline).sort();
             if(liveKeys.length > 0) {
                 chartLivesTimeline.data.labels = liveKeys;

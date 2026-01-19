@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Auto)</title>
+    <title>V4 | CVC Dashboard (Final)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -124,9 +124,10 @@
     </div>
 
     <script>
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?output=csv';
+        // --- ⚠️ LINK ATUALIZADO COM SUCESSO ---
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
 
-        // --- BANCO DE LATITUDE/LONGITUDE ---
+        // --- DICIONÁRIO DE CIDADES ---
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
@@ -182,13 +183,12 @@
             }, 500);
         }
 
-        // PARSER CSV ROBUSTO (Resolve conflitos de vírgula)
+        // PARSER CSV ROBUSTO (Resolve problema de vírgulas e ponto-e-vírgula)
         function parseCSV(text) {
             const lines = text.split('\n');
-            // Detecta separador na primeira linha
             const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
             const result = [];
-            for (let i = 0; i < lines.length; i++) { // LÊ DESDE A LINHA 0 (HEADER)
+            for (let i = 0; i < lines.length; i++) { 
                 if (!lines[i].trim()) continue;
                 const regex = new RegExp(`(?:${separator}|\\r?\\n|^)(?:"([^"]*)"|([^"${separator}\\r\\n]*))`, 'gi');
                 const row = [];
@@ -208,53 +208,50 @@
                 const text = await response.text();
                 const allRows = parseCSV(text); 
 
-                // --- CAÇADOR DE CABEÇALHOS (ENCONTRA AS COLUNAS SOZINHO) ---
+                // DETECTOR DE COLUNAS (LÊ O CABEÇALHO SOZINHO)
                 const headers = allRows[0].map(h => h.toUpperCase().trim());
-                
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
                     STATUS_COLS: []
                 };
 
-                // Encontra todas as colunas de TENTATIVA (TENTATIVA 1, TENTATIVA 2...)
-                headers.forEach((h, i) => {
-                    if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i);
-                });
+                // Encontra colunas de TENTATIVA
+                headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
 
-                // Se não achar, usa padrão
+                // Se não achar, usa padrão (Fallback)
                 if(IDX.DATA === -1) IDX.DATA = 0;
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                // Processa os dados (Pulando o header)
-                const rows = allRows.slice(1);
-                const leads = rows.map(cols => {
+                // TRAVA DE SEGURANÇA: Filtra linhas que não são dados de lead
+                const leads = allRows.slice(1).map(cols => {
                     if(cols.length < 5) return null;
+                    
+                    // Verifica se a data parece uma data (contém números e /)
+                    // Isso evita pegar lixo ou cabeçalhos errados
+                    if (!cols[IDX.DATA].match(/\d/)) return null;
 
-                    // 1. LÓGICA DE STATUS: PROCURA OURO NAS TENTATIVAS
+                    // LÓGICA DE STATUS: PROCURA OURO NAS TENTATIVAS
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
 
-                    // Varre todas as colunas de tentativa encontradas
-                    // Prioriza status fortes: BANT, QUALIFICADO, PARTICIPOU
                     for (let colIndex of IDX.STATUS_COLS) {
                         const val = (cols[colIndex] || "").toUpperCase().trim();
                         if (!val || val === "-" || val === "") continue;
 
                         if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) {
-                            finalStatus = val; foundMeaningful = true; break; // Achou ouro, para!
+                            finalStatus = val; foundMeaningful = true; break; 
                         }
                         if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) {
-                            finalStatus = val; foundMeaningful = true; // Guarda, mas continua procurando ouro
+                            finalStatus = val; foundMeaningful = true; 
                         }
-                        // Se ainda não achou nada importante, guarda qualquer coisa que não seja "Sem Resposta"
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) {
                             finalStatus = val;
                         }
                     }
 
-                    // 2. CIDADE
+                    // CIDADE
                     const rawCity = cols[IDX.CIDADE] || "";
                     const cleanCity = rawCity.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     const coords = COORDENADAS[cleanCity];
@@ -266,15 +263,15 @@
                         lat: coords ? coords[0] : null,
                         lng: coords ? coords[1] : null
                     };
-                }).filter(i => i !== null);
+                }).filter(i => i !== null); // Remove linhas ruins
 
                 updateDashboard(leads);
 
-            } catch (error) { console.error(error); alert("Erro ao carregar dados."); }
+            } catch (error) { console.error(error); alert("Erro ao carregar dados. Verifique o link CSV."); }
         }
 
         function updateDashboard(leads) {
-            // KPI BANT4
+            // KPI
             const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO') || l.status.includes('FRANQUEADO')).length;
             document.getElementById('kpi-bant').innerText = bant4;
             chartQualidade.data.datasets[0].data = [bant4, leads.length - bant4];
@@ -295,7 +292,7 @@
             chartLive.data.datasets[0].data = [semResp, contatado, bant4, participou];
             chartLive.update();
 
-            // LIVE PIE
+            // PIE
             const faltou = leads.filter(l => l.status.includes('FALTOU')).length;
             chartReuniao.data.datasets[0].data = [participou, leads.length - (participou+faltou), faltou];
             chartReuniao.update();
@@ -303,19 +300,14 @@
             // MAPA
             map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
             leads.forEach(l => {
-                if(l.lat) L.marker([l.lat, l.lng], { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) })
-                .addTo(map).bindPopup(`<b>${l.cidade}</b><br>${l.status}`);
+                if(l.lat) L.marker([l.lat, l.lng], { icon: L.divIcon({ className: 'custom-pin', iconSize:[24,24] }) }).addTo(map).bindPopup(`<b>${l.cidade}</b><br>${l.status}`);
             });
 
             // TIMELINE
             const dates = {};
             leads.forEach(l => { 
-                // Tenta extrair DD/MM
                 let d = 'N/D';
-                if(l.data && l.data.length >= 5) {
-                    // Pega os primeiros 5 chars (ex 02/01)
-                    d = l.data.substring(0, 5);
-                }
+                if(l.data && l.data.length >= 5) d = l.data.substring(0, 5);
                 dates[d] = (dates[d]||0)+1; 
             });
             const labels = Object.keys(dates).sort();
@@ -327,7 +319,6 @@
             chartLivesTimeline.update();
         }
 
-        // --- INITS ---
         function initEmptyCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
             chartQualidade = new Chart(document.getElementById('chartQualidade'), { type: 'doughnut', data: { labels: ['Qualif', 'Outros'], datasets: [{ data: [0, 1], backgroundColor: ['#ff1f2d', '#1f1f1f'], borderWidth: 0 }] }, options: { cutout: '85%', plugins: { legend: { display: false } } } });

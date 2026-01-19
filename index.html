@@ -53,8 +53,12 @@
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
-        .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: block; letter-spacing: 1px; }
+        .card-title { color: var(--text-muted); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; display: block; letter-spacing: 1px; }
         
+        /* Novos estilos para o cabeçalho do card com BANT4 */
+        .card-header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .mini-badge { background-color: var(--v4-neon-red); color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 5px rgba(255, 31, 45, 0.3); border: 1px solid rgba(255,255,255,0.2); }
+
         .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
         .span-4 { grid-column: span 4; } .span-8 { grid-column: span 8; } .span-12{ grid-column: span 12;}
         .dashboard-section { display: none; animation: fadeIn 0.4s ease; }
@@ -114,23 +118,26 @@
                 </div>
                 <div class="grid">
                     <div class="card span-4">
-                        <span class="card-title">STATUS DA BASE (COLUNA K)</span>
+                        <div class="card-header-flex">
+                            <span class="card-title" style="margin-bottom: 0;">STATUS DA BASE</span>
+                            <div id="kpi-bant-mini" class="mini-badge">0 BANT4</div>
+                        </div>
                         <div class="chart-wrapper">
                             <canvas id="chartQualidade"></canvas>
                         </div>
                     </div>
 
-                    <div class="card span-8"><span class="card-title">Top 5 Cidades (Vol. Leads)</span><div style="height: 220px;"><canvas id="chartCidades"></canvas></div></div>
+                    <div class="card span-8"><span class="card-title" style="margin-bottom: 20px;">Top 5 Cidades (Vol. Leads)</span><div style="height: 220px;"><canvas id="chartCidades"></canvas></div></div>
                     
-                    <div class="card span-4 yellow-accent"><span class="card-title">PARTICIPAÇÃO LIVE</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
+                    <div class="card span-4 yellow-accent"><span class="card-title" style="margin-bottom: 20px;">PARTICIPAÇÃO LIVE</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
                     
-                    <div class="card span-8"><span class="card-title">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
+                    <div class="card span-8"><span class="card-title" style="margin-bottom: 20px;">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
                 </div>
             </div>
             <div id="section-leads" class="dashboard-section">
                 <div class="header"><h1>Performance de Leads</h1><p>Evolução diária de novos cadastros.</p></div>
                 <div class="grid"><div class="card span-12">
-                    <span id="leads-title" class="card-title">VOLUME DIÁRIO DE LEADS</span>
+                    <span id="leads-title" class="card-title" style="margin-bottom: 20px;">VOLUME DIÁRIO DE LEADS</span>
                     <div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div>
                 </div></div>
             </div>
@@ -140,7 +147,7 @@
             </div>
             <div id="section-lives" class="dashboard-section">
                 <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live por dia.</p></div>
-                <div class="grid"><div class="card span-12"><span class="card-title">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
+                <div class="grid"><div class="card span-12"><span class="card-title" style="margin-bottom: 20px;">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
             </div>
         </main>
     </div>
@@ -326,6 +333,11 @@
             chartQualidade.data.datasets[0].data = [k_ativos, k_qualificados, k_inativos];
             chartQualidade.update();
 
+            // ATUALIZA O MINI INDICADOR BANT4 NO TÍTULO
+            const bant4_total = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
+            document.getElementById('kpi-bant-mini').innerText = `${bant4_total} BANT4`;
+
+
             // CIDADES
             const cityCount = {};
             leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade]||0)+1; });
@@ -344,10 +356,9 @@
             chartReuniao.update();
 
             // FUNIL GERAL
-            const bant4 = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             const contatado = leads.filter(l => l.status.includes('CONTATADO')).length;
             const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
-            chartLive.data.datasets[0].data = [semResp, contatado, bant4, liveStats.presente];
+            chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
             chartLive.update();
 
             // TIMELINES

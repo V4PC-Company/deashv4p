@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Final)</title>
+    <title>V4 | CVC Dashboard (Auto)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -127,25 +126,49 @@
     <script>
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?output=csv';
 
-        // CONFIGURAÇÃO DAS COLUNAS (A=0, B=1, E=4, L=11, P=15)
-        const COL = { DATA: 0, NOME: 1, CIDADE: 4, TENTATIVA_START: 11, TENTATIVA_END: 15 };
-
-        // COORDENADAS (Adicione mais cidades aqui se precisar)
+        // --- BANCO DE LATITUDE/LONGITUDE ---
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
             "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
             "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345],
-            "brasilia": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016],
-            "fortaleza": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733],
-            "manaus": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770],
-            "porto alegre": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648],
-            "belem": [-1.4558, -48.4902], "campinas": [-22.9099, -47.0626],
-            "sao luis": [-2.5307, -44.3068], "maceio": [-9.6662, -35.7351],
-            "campo grande": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110],
-            "teresina": [-5.0919, -42.8034], "joao pessoa": [-7.1195, -34.8450],
-            "aracaju": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979],
-            "vitoria": [-20.3155, -40.3128], "florianopolis": [-27.5954, -48.5480],
-            "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222]
+            "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919],
+            "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016],
+            "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434],
+            "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733],
+            "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217],
+            "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770],
+            "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177],
+            "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648],
+            "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902],
+            "guarulhos": [-23.4515, -46.5333],
+            "campinas": [-22.9099, -47.0626],
+            "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068],
+            "sao goncalo": [-22.8275, -43.0631],
+            "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351],
+            "duque de caxias": [-22.7923, -43.3108],
+            "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201],
+            "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110],
+            "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034],
+            "sao bernardo do campo": [-23.6914, -46.5646],
+            "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450],
+            "nova iguacu": [-22.7561, -43.4607],
+            "santo andre": [-23.6638, -46.5383],
+            "osasco": [-23.5336, -46.7920],
+            "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009],
+            "jaboatao dos guararapes": [-8.1782, -35.0354],
+            "ribeirao preto": [-21.1704, -47.8103],
+            "uberlandia": [-18.9113, -48.2622],
+            "contagem": [-19.9326, -44.0538],
+            "sorocaba": [-23.5015, -47.4521],
+            "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731],
+            "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979],
+            "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128],
+            "juiz de fora": [-21.7661, -43.3503],
+            "londrina": [-23.3045, -51.1696],
+            "niteroi": [-22.8808, -43.1043],
+            "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480],
+            "palmeira dos indios": [-9.4079, -36.6322],
+            "juazeiro do norte": [-7.2372, -39.3222]
         };
 
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, map;
@@ -159,16 +182,14 @@
             }, 500);
         }
 
-        // PARSER CSV ROBUSTO (Resolve problema de vírgulas e pontos e vírgulas)
+        // PARSER CSV ROBUSTO (Resolve conflitos de vírgula)
         function parseCSV(text) {
             const lines = text.split('\n');
-            const result = [];
-            // Detecta separador na primeira linha (Header)
+            // Detecta separador na primeira linha
             const separator = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
-            
-            for (let i = 1; i < lines.length; i++) { // Pula header
+            const result = [];
+            for (let i = 0; i < lines.length; i++) { // LÊ DESDE A LINHA 0 (HEADER)
                 if (!lines[i].trim()) continue;
-                // Regex mágica que respeita aspas: 'Campo 1,"Campo, com, virgula",Campo 3'
                 const regex = new RegExp(`(?:${separator}|\\r?\\n|^)(?:"([^"]*)"|([^"${separator}\\r\\n]*))`, 'gi');
                 const row = [];
                 let matches;
@@ -176,7 +197,7 @@
                     let val = matches[1] || matches[2] || '';
                     row.push(val.trim());
                 }
-                if (row.length > 5) result.push(row); // Garante que a linha tem dados
+                result.push(row);
             }
             return result;
         }
@@ -185,44 +206,67 @@
             try {
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
-                const rows = parseCSV(text); // Usa o parser novo
+                const allRows = parseCSV(text); 
 
+                // --- CAÇADOR DE CABEÇALHOS (ENCONTRA AS COLUNAS SOZINHO) ---
+                const headers = allRows[0].map(h => h.toUpperCase().trim());
+                
+                const IDX = {
+                    DATA: headers.findIndex(h => h.includes("DATA")),
+                    CIDADE: headers.findIndex(h => h.includes("CIDADE")),
+                    STATUS_COLS: []
+                };
+
+                // Encontra todas as colunas de TENTATIVA (TENTATIVA 1, TENTATIVA 2...)
+                headers.forEach((h, i) => {
+                    if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i);
+                });
+
+                // Se não achar, usa padrão
+                if(IDX.DATA === -1) IDX.DATA = 0;
+                if(IDX.CIDADE === -1) IDX.CIDADE = 4;
+                if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
+
+                // Processa os dados (Pulando o header)
+                const rows = allRows.slice(1);
                 const leads = rows.map(cols => {
-                    // 1. LÓGICA DE STATUS "INTELIGENTE" (Ignora Sem Resposta se tiver outro)
+                    if(cols.length < 5) return null;
+
+                    // 1. LÓGICA DE STATUS: PROCURA OURO NAS TENTATIVAS
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
 
-                    // Varre todas as tentativas (L até P)
-                    // Prioridade: Se encontrar BANT4, PARTICIPOU ou CONTATADO, usa ele.
-                    // Se só encontrar SEM RESPOSTA, mantem SEM RESPOSTA.
-                    for (let i = COL.TENTATIVA_START; i <= COL.TENTATIVA_END; i++) {
-                        const val = (cols[i] || "").toUpperCase().trim();
+                    // Varre todas as colunas de tentativa encontradas
+                    // Prioriza status fortes: BANT, QUALIFICADO, PARTICIPOU
+                    for (let colIndex of IDX.STATUS_COLS) {
+                        const val = (cols[colIndex] || "").toUpperCase().trim();
                         if (!val || val === "-" || val === "") continue;
 
                         if (val.includes("BANT") || val.includes("QUALIFICADO") || val.includes("FRANQUEADO")) {
-                            finalStatus = val; foundMeaningful = true; break; // Achou ouro, para aqui
+                            finalStatus = val; foundMeaningful = true; break; // Achou ouro, para!
                         }
                         if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) {
-                            finalStatus = val; foundMeaningful = true; // Guarda esse, mas continua procurando ouro
+                            finalStatus = val; foundMeaningful = true; // Guarda, mas continua procurando ouro
                         }
+                        // Se ainda não achou nada importante, guarda qualquer coisa que não seja "Sem Resposta"
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) {
-                            finalStatus = val; // Qualquer coisa diferente de "Sem Resposta" é melhor
+                            finalStatus = val;
                         }
                     }
 
                     // 2. CIDADE
-                    const rawCity = cols[COL.CIDADE] || "";
+                    const rawCity = cols[IDX.CIDADE] || "";
                     const cleanCity = rawCity.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     const coords = COORDENADAS[cleanCity];
 
                     return {
-                        data: cols[COL.DATA],
+                        data: cols[IDX.DATA],
                         cidade: rawCity,
                         status: finalStatus,
                         lat: coords ? coords[0] : null,
                         lng: coords ? coords[1] : null
                     };
-                });
+                }).filter(i => i !== null);
 
                 updateDashboard(leads);
 
@@ -265,13 +309,21 @@
 
             // TIMELINE
             const dates = {};
-            leads.forEach(l => { const d = l.data ? l.data.substring(0,5) : 'N/D'; dates[d] = (dates[d]||0)+1; });
+            leads.forEach(l => { 
+                // Tenta extrair DD/MM
+                let d = 'N/D';
+                if(l.data && l.data.length >= 5) {
+                    // Pega os primeiros 5 chars (ex 02/01)
+                    d = l.data.substring(0, 5);
+                }
+                dates[d] = (dates[d]||0)+1; 
+            });
             const labels = Object.keys(dates).sort();
             chartLeadsTimeline.data.labels = labels;
             chartLeadsTimeline.data.datasets[0].data = labels.map(d => dates[d]);
             chartLeadsTimeline.update();
             chartLivesTimeline.data.labels = labels; 
-            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]); // Exemplo: mesmo vol.
+            chartLivesTimeline.data.datasets[0].data = labels.map(d => dates[d]);
             chartLivesTimeline.update();
         }
 

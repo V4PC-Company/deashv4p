@@ -24,6 +24,7 @@
             --v4-dark-red: #a30009;
             --cvc-neon-yellow: #ffd700;
             --status-green: #00c853;
+            --status-blue-dark: #0D47A1; /* Azul Escuro para Agendado */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -266,8 +267,8 @@
                 const txtLeads = await resLeads.text();
                 const rowsLeads = parseCSV(txtLeads);
 
-                // 2. LIVES
-                let liveStats = { presente: 0, ausente: 0 };
+                // 2. LIVES (Corrigido para incluir AGENDADO e data)
+                let liveStats = { presente: 0, ausente: 0, agendado: 0 };
                 let liveTimeline = {};
                 let currentLiveDate = null;
 
@@ -283,10 +284,11 @@
                                 if(match) currentLiveDate = match[1]; 
                                 return;
                             }
-                            const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente'));
+                            const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
                             if (statusCell) {
                                 if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
                                 if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
+                                if (statusCell.toLowerCase() === 'agendado') liveStats.agendado++;
                                 if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
                             }
                         });
@@ -368,13 +370,13 @@
             chartCidades.data.datasets[0].data = topCities.map(c=>c[1]);
             chartCidades.update();
 
-            // PIE LIVE
-            const totalLeads = leads.length;
-            const processadosLive = liveStats.presente + liveStats.ausente;
-            const semRespostaLive = totalLeads - processadosLive;
-            const semRespostaFinal = semRespostaLive > 0 ? semRespostaLive : 0;
-
-            chartReuniao.data.datasets[0].data = [liveStats.presente, semRespostaFinal, liveStats.ausente];
+            // PIE LIVE (Atualizado: AGENDADO em Azul Escuro)
+            // Agrupando "Sem Resposta" como restante, mas exibindo Agendado explicitamente
+            
+            // Ordem: Presente (Verde), Agendado (Azul Escuro), Ausente (Vermelho)
+            chartReuniao.data.labels = ['Presente', 'Agendado', 'Ausente'];
+            chartReuniao.data.datasets[0].backgroundColor = ['#00c853', '#0D47A1', '#d32f2f']; 
+            chartReuniao.data.datasets[0].data = [liveStats.presente, liveStats.agendado, liveStats.ausente];
             chartReuniao.update();
 
             // FUNIL GERAL
@@ -461,7 +463,8 @@
             const grad = ctxCid.createLinearGradient(0,0,0,300); grad.addColorStop(0,'#ff1f2d'); grad.addColorStop(1,'#600000');
             chartCidades = new Chart(ctxCid, { type: 'bar', data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } } });
             
-            chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { labels: ['Presente', 'Sem Resposta', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#333', '#d32f2f'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
+            // Chart Reunião atualizado com cor Azul Escuro para Agendado
+            chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { labels: ['Presente', 'Agendado', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#0D47A1', '#d32f2f'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
             
             chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
 

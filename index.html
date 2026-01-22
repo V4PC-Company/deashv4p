@@ -24,7 +24,7 @@
             --v4-dark-red: #a30009;
             --cvc-neon-yellow: #ffd700;
             --status-green: #00c853;
-            --status-blue-dark: #0D47A1; /* Azul Escuro para Agendado */
+            --status-blue-dark: #0D47A1; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -78,7 +78,7 @@
         .custom-pin { background-color: var(--v4-neon-red); width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px var(--v4-neon-red); }
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; font-family: 'Inter', sans-serif; }
         .leaflet-popup-tip { background: #141414; border: 1px solid #333; }
-        .leaflet-container { background: #141414 !important; } /* Fundo preto enquanto carrega */
+        .leaflet-container { background: #141414 !important; }
 
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; z-index: 10; }
@@ -112,6 +112,7 @@
             <div id="btn-leads" class="nav-item" onclick="switchTab('section-leads', 'btn-leads')">Performance de Leads</div>
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
+            <div id="btn-repasse" class="nav-item" onclick="switchTab('section-repasse', 'btn-repasse')">Lista de Repasse</div>
             <div class="user-profile">
                 <img src="data:image/webp;base64,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">
                 <div>
@@ -143,8 +144,14 @@
                     <div class="card span-4 yellow-accent"><span class="card-title" style="margin-bottom: 20px;">PARTICIPAÇÃO LIVE</span><div style="height: 200px;"><canvas id="chartReuniao"></canvas></div></div>
                     
                     <div class="card span-8"><span class="card-title" style="margin-bottom: 20px;">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
+
+                    <div class="card span-12">
+                        <span class="card-title" style="margin-bottom: 20px;">TOP GERENTES (Por Volume de Repasse)</span>
+                        <div style="height: 300px;"><canvas id="chartRepasseOverview"></canvas></div>
+                    </div>
                 </div>
             </div>
+            
             <div id="section-leads" class="dashboard-section">
                 <div class="header"><h1>Performance de Leads</h1><p>Evolução diária de novos cadastros.</p></div>
                 <div class="grid"><div class="card span-12">
@@ -152,14 +159,40 @@
                     <div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div>
                 </div></div>
             </div>
+            
             <div id="section-geo" class="dashboard-section">
                 <div class="header"><h1>Expansão Geográfica</h1><p>Mapeamento das principais praças de interesse.</p></div>
                 <div class="grid"><div class="card span-12"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><span class="card-title" style="margin:0;">Mapa Interativo</span><div style="display: flex; gap: 15px; font-size: 0.75rem;"><span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px; height:10px; background: #ff1f2d; border-radius:50%;"></span> Lead Ativo</span></div></div><div id="map" class="map-container"></div></div></div>
             </div>
+            
             <div id="section-lives" class="dashboard-section">
                 <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live por dia.</p></div>
                 <div class="grid"><div class="card span-12"><span class="card-title" style="margin-bottom: 20px;">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
             </div>
+
+            <div id="section-repasse" class="dashboard-section">
+                <div class="header">
+                    <h1>Lista de Repasse</h1>
+                    <p>Consulta detalhada de registros de repasse.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+                            <input type="text" id="filtroRepasse" class="login-input" style="margin-bottom: 0; width: 300px;" placeholder="🔍 Filtrar na lista (ex: nome, cidade...)" onkeyup="filtrarTabelaRepasse()">
+                            <span id="total-repasse" class="mini-badge" style="background: var(--bg-tertiary); color: var(--text-muted);">Carregando...</span>
+                        </div>
+                        <div style="overflow-x: auto; max-height: 500px; border-radius: 8px; border: 1px solid #333;">
+                            <table id="tabela-repasse" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                                <thead style="background: var(--bg-tertiary); position: sticky; top: 0; z-index: 5;">
+                                    </thead>
+                                <tbody>
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
@@ -167,6 +200,7 @@
         // CONFIG LINKS
         const LEADS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSq7tm8TN8KWT9sFip9UkeghlkZUOf3J-PKP035h1_EKNvOh-SXCcOakUTXKS5NI2xJ-hzRzQFruaRg/pub?gid=1787906905&single=true&output=csv';
         const LIVE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8KWWCjb7eYtXhLEpsgxgRI7wurO2HqO0YLcoSAKxkdLTuVGNiQ86HRMz5AKLaIJbnckxl9P4d6TJP/pub?gid=859560778&single=true&output=csv';
+        const REPASSE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4VzCT82OlId7PUor1-cs7e-Phj47EhC5ViQPEtZ8QitfCBUBASg1WUlUIHb6ShIBH9vYSJqPkd3Yq/pub?gid=0&single=true&output=csv';
 
         const COORDENADAS = {
             "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
@@ -212,7 +246,7 @@
             "juazeiro do norte": [-7.2372, -39.3222]
         };
 
-        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, map;
+        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
 
@@ -260,46 +294,107 @@
             return result;
         }
 
+        function renderRepasseTable(data) {
+            const tableHead = document.querySelector("#tabela-repasse thead");
+            const tableBody = document.querySelector("#tabela-repasse tbody");
+            const headers = data[0];
+            tableHead.innerHTML = `<tr>${headers.map(h => `<th style="padding: 12px; border-bottom: 2px solid #333; color: white;">${h}</th>`).join('')}</tr>`;
+            tableBody.innerHTML = data.slice(1).map(row => {
+                if(row.length < 1 || !row[0]) return '';
+                return `<tr style="border-bottom: 1px solid #222;">${row.map(cell => `<td style="padding: 12px; color: var(--text-muted);">${cell}</td>`).join('')}</tr>`;
+            }).join('');
+            document.getElementById('total-repasse').innerText = `${data.length - 1} Registros Encontrados`;
+        }
+
+        function filtrarTabelaRepasse() {
+            const input = document.getElementById("filtroRepasse");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("tabela-repasse");
+            const tr = table.getElementsByTagName("tr");
+            for (let i = 1; i < tr.length; i++) {
+                let txtValue = tr[i].textContent || tr[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // --- LÓGICA ATUALIZADA DO GRÁFICO DE REPASSE ---
+        function updateRepasseChart(data) {
+            // 1. Encontrar o índice da coluna "Gerente"
+            const headers = data[0].map(h => h.toUpperCase().trim());
+            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE EXECUTIVO") || h.includes("GERENTE"));
+            
+            // Fallback: Se não achar, usa a coluna 1
+            if (mgrIndex === -1) mgrIndex = 1; 
+
+            const rows = data.slice(1);
+            const counts = {};
+            
+            // 2. Contar frequência
+            rows.forEach(r => {
+                if(!r[0]) return;
+                const rawName = r[mgrIndex] ? r[mgrIndex].trim() : "N/D";
+                // Limpeza básica de nome se necessário (opcional)
+                const name = rawName === "" ? "N/D" : rawName;
+                counts[name] = (counts[name] || 0) + 1;
+            });
+
+            // 3. Ordenar do maior para o menor
+            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10); // Top 10
+            
+            chartRepasseOverview.data.labels = sorted.map(i => i[0]);
+            chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
+            chartRepasseOverview.update();
+        }
+
         async function fetchData() {
             try {
-                // 1. LEADS
-                const resLeads = await fetch(LEADS_URL);
-                const txtLeads = await resLeads.text();
-                const rowsLeads = parseCSV(txtLeads);
+                const [resLeads, resLive, resRepasse] = await Promise.all([
+                    fetch(LEADS_URL).then(r => r.text()),
+                    LIVE_SHEET_URL ? fetch(LIVE_SHEET_URL).then(r => r.text()) : Promise.resolve(""),
+                    fetch(REPASSE_URL).then(r => r.text())
+                ]);
 
-                // 2. LIVES (Corrigido para incluir AGENDADO e data)
+                // Repasse
+                const rowsRepasse = parseCSV(resRepasse);
+                renderRepasseTable(rowsRepasse);
+                updateRepasseChart(rowsRepasse); // Chama a função atualizada
+
+                // Leads
+                const rowsLeads = parseCSV(resLeads);
+                
+                // Lives
                 let liveStats = { presente: 0, ausente: 0, agendado: 0 };
                 let liveTimeline = {};
-                let currentLiveDate = null;
-
-                if(LIVE_SHEET_URL) {
-                    try {
-                        const resLive = await fetch(LIVE_SHEET_URL);
-                        const txtLive = await resLive.text();
-                        const rowsLive = parseCSV(txtLive);
-                        rowsLive.forEach(row => {
-                            const rowString = row.join(' ');
-                            if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                                const match = rowString.match(/(\d{2}\/\d{2})/);
-                                if(match) currentLiveDate = match[1]; 
-                                return;
-                            }
-                            const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
-                            if (statusCell) {
-                                if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
-                                if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
-                                if (statusCell.toLowerCase() === 'agendado') liveStats.agendado++;
-                                if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
-                            }
-                        });
-                    } catch(e) { console.warn("Erro Lives", e); }
+                
+                if(resLive) {
+                    const rowsLive = parseCSV(resLive);
+                    let currentLiveDate = null;
+                    rowsLive.forEach(row => {
+                        const rowString = row.join(' ');
+                        if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                            const match = rowString.match(/(\d{2}\/\d{2})/);
+                            if(match) currentLiveDate = match[1]; 
+                            return;
+                        }
+                        const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
+                        if (statusCell) {
+                            if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
+                            if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
+                            if (statusCell.toLowerCase() === 'agendado') liveStats.agendado++;
+                            if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
+                        }
+                    });
                 }
 
                 const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
-                    STATUS_K: 10, // COLUNA K (A=0, K=10)
+                    STATUS_K: 10, 
                     STATUS_COLS: []
                 };
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
@@ -311,7 +406,6 @@
                 const leads = rowsLeads.slice(1).map(cols => {
                     if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
-                    // STATUS DO FUNIL GERAL (Tentativas)
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
                     for (let colIndex of IDX.STATUS_COLS) {
@@ -322,9 +416,7 @@
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
 
-                    // STATUS ESPECÍFICO DA COLUNA K (ATIVO/INATIVO)
                     let statusK = (cols[IDX.STATUS_K] || "").toUpperCase().trim();
-                    // Se estiver vazio na coluna K, considera ATIVO
                     if (statusK === "") statusK = "ATIVO"; 
 
                     const rawCity = cols[IDX.CIDADE] || "";
@@ -335,34 +427,17 @@
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
         }
 
-        // Função auxiliar para converter string de data (DD/MM/YYYY) para objeto ordenável
-        function parseDateKey(dateStr) {
-            // Assume formato DD/MM ou DD/MM/YYYY
-            const parts = dateStr.split('/');
-            if(parts.length < 2) return 0;
-            // Cria um número YYYYMMDD para ordenar
-            const d = parts[0].padStart(2, '0');
-            const m = parts[1].padStart(2, '0');
-            const y = parts[2] || new Date().getFullYear();
-            return parseInt(`${y}${m}${d}`);
-        }
-
         function updateDashboard(leads, liveStats, liveTimeline) {
-            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
-            const k_ativos = leads.filter(l => l.statusK === "ATIVO").length; // Vazio na planilha
+            const k_ativos = leads.filter(l => l.statusK === "ATIVO").length; 
             const k_qualificados = leads.filter(l => l.statusK.includes("QUALIFICADO")).length;
             const k_inativos = leads.filter(l => l.statusK.includes("INATIVO") || l.statusK.includes("DESATIVAR")).length;
 
-            // Cores: Ativo (Vermelho), Qualificado (Verde), Inativo (Cinza)
             chartQualidade.data.datasets[0].data = [k_ativos, k_qualificados, k_inativos];
             chartQualidade.update();
 
-            // ATUALIZA O MINI INDICADOR BANT4 NO TÍTULO
             const bant4_total = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             document.getElementById('kpi-bant-mini').innerText = `${bant4_total} BANT4`;
 
-
-            // CIDADES
             const cityCount = {};
             leads.forEach(l => { if(l.cidade) cityCount[l.cidade] = (cityCount[l.cidade]||0)+1; });
             const topCities = Object.entries(cityCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
@@ -370,41 +445,29 @@
             chartCidades.data.datasets[0].data = topCities.map(c=>c[1]);
             chartCidades.update();
 
-            // PIE LIVE (Atualizado: AGENDADO em Azul Escuro)
-            // Agrupando "Sem Resposta" como restante, mas exibindo Agendado explicitamente
-            
-            // Ordem: Presente (Verde), Agendado (Azul Escuro), Ausente (Vermelho)
             chartReuniao.data.labels = ['Presente', 'Agendado', 'Ausente'];
             chartReuniao.data.datasets[0].backgroundColor = ['#00c853', '#0D47A1', '#d32f2f']; 
             chartReuniao.data.datasets[0].data = [liveStats.presente, liveStats.agendado, liveStats.ausente];
             chartReuniao.update();
 
-            // FUNIL GERAL
             const contatado = leads.filter(l => l.status.includes('CONTATADO')).length;
             const semResp = leads.filter(l => l.status.includes('SEM RESPOSTA')).length;
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
             chartLive.update();
 
-            // TIMELINES (CORREÇÃO DE DATA)
             const dates = {};
             leads.forEach(l => { 
-                // Extrai DD/MM/YYYY se possível, ou usa o que tiver
                 let dStr = l.data.trim();
-                // Normaliza para DD/MM para exibição, mas precisamos da data completa para ordenar
-                const parts = dStr.split(' ')[0].split('/'); // Pega só a data se tiver hora
+                const parts = dStr.split(' ')[0].split('/'); 
                 if(parts.length >= 2) {
-                    const displayKey = `${parts[0]}/${parts[1]}`; // DD/MM
-                    // Armazena a contagem
+                    const displayKey = `${parts[0]}/${parts[1]}`;
                     dates[displayKey] = (dates[displayKey]||0) + 1;
                 }
             });
 
-            // Ordena as chaves baseada na data real e não alfabeticamente
             const labels = Object.keys(dates).sort((a, b) => {
                 const [d1, m1] = a.split('/');
                 const [d2, m2] = b.split('/');
-                // Ordena por mês depois dia (assumindo mesmo ano para simplificar visualização mensal)
-                // Se precisar de multiano, precisaria do ano no displayKey
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
             });
 
@@ -412,7 +475,6 @@
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
-            // LIVES TIMELINE
             const liveLabels = Object.keys(liveTimeline).sort((a, b) => {
                 const [d1, m1] = a.split('/');
                 const [d2, m2] = b.split('/');
@@ -423,7 +485,6 @@
             chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
             chartLivesTimeline.update();
 
-            // MAPA
             if(map) {
                 map.eachLayer(l => { if(l.options.icon) map.removeLayer(l); });
                 for(const [cidade, qtd] of Object.entries(cityCount)) {
@@ -440,14 +501,13 @@
         function initCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
             
-            // --- GRÁFICO 1: STATUS DA BASE (COLUNA K) ---
             chartQualidade = new Chart(document.getElementById('chartQualidade'), {
                 type: 'pie', 
                 data: { 
                     labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'],
                     datasets: [{ 
                         data: [0, 0, 0], 
-                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], // Vermelho, Verde, Cinza
+                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], 
                         borderWidth: 0 
                     }] 
                 },
@@ -463,7 +523,6 @@
             const grad = ctxCid.createLinearGradient(0,0,0,300); grad.addColorStop(0,'#ff1f2d'); grad.addColorStop(1,'#600000');
             chartCidades = new Chart(ctxCid, { type: 'bar', data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } } });
             
-            // Chart Reunião atualizado com cor Azul Escuro para Agendado
             chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { labels: ['Presente', 'Agendado', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#0D47A1', '#d32f2f'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
             
             chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
@@ -471,21 +530,41 @@
             const commonLineOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } };
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
+        
+            // CHART REPASSE (GERENTES)
+            chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Volume de Repasses',
+                        data: [],
+                        backgroundColor: '#ff1f2d',
+                        borderRadius: 5,
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: '#222' } }, 
+                        x: { grid: { display: false } } 
+                    }
+                }
+            });
         }
 
         function initMap() { 
-    if(!map) { 
-        map = L.map('map').setView([-14.235, -51.925], 4); 
-        
-        // OPÇÃO: CartoDB Positron (Cinza Claro/Branco - Ótima Leitura)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; OpenStreetMap &copy; CARTO',
-            subdomains: 'abcd',
-            maxZoom: 19
-        }).addTo(map); 
-    } 
-}
+            if(!map) { 
+                map = L.map('map').setView([-14.235, -51.925], 4); 
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map); 
+            } 
+        }
     </script>
 </body>
 </html>
-

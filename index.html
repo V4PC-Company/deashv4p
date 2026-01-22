@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Histórico)</title>
+    <title>V4 | CVC Dashboard (2026+)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" type="image/png">
 
@@ -57,7 +57,7 @@
         /* HEADER & FILTRO */
         .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;}
         .header-content h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
-        .month-select { background: var(--bg-tertiary); color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 8px; font-family: 'Inter'; font-size: 0.9rem; cursor: pointer; outline: none; }
+        .month-select { background: var(--bg-tertiary); color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 8px; font-family: 'Inter'; font-size: 0.9rem; cursor: pointer; outline: none; min-width: 200px; }
         .month-select:hover { border-color: var(--v4-neon-red); }
 
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
@@ -270,16 +270,19 @@
 
         function populateMonthFilter() {
             const months = new Set();
-            // Escaneia Leads para achar meses
+            
+            // 1. Escaneia Leads para achar meses
             RAW_LEADS.forEach(l => {
                 const my = getMonthYearFromDate(l.data);
-                if(my) months.add(my);
+                // LÓGICA DE CORTE: Apenas datas >= Janeiro de 2026
+                if(my && my >= '2026-01') months.add(my);
             });
-            // Escaneia Repasse
+            
+            // 2. Escaneia Repasse
             RAW_REPASSE.forEach(r => {
-                // Assume coluna 0 é data, senão tenta achar
                 const my = getMonthYearFromDate(r[0]); 
-                if(my) months.add(my);
+                // LÓGICA DE CORTE: Apenas datas >= Janeiro de 2026
+                if(my && my >= '2026-01') months.add(my);
             });
 
             const sortedMonths = Array.from(months).sort().reverse(); // Decrescente
@@ -316,10 +319,6 @@
             // Filtra Lives (Recalcula stats)
             let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
             let filteredLiveTimeline = {};
-            
-            // Precisamos reprocessar o CSV raw das lives se quisermos filtrar, 
-            // mas como já processamos antes, vamos usar o RAW_LIVE salvo (linhas)
-            // Assumindo que RAW_LIVE guarda linhas cruas
             
             RAW_LIVE.forEach(row => {
                 const rowString = row.join(' ');
@@ -448,10 +447,15 @@
         }
 
         function updateRepasseChart(data) {
-            // Usa lógica do Gerente
+            // Usa lógica do Gerente (ATUALIZADA PARA BUSCAR COLUNA ESPECÍFICA)
             const headers = data[0].map(h => h.toUpperCase().trim());
-            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE EXECUTIVO") || h.includes("GERENTE"));
-            if (mgrIndex === -1) mgrIndex = 1; 
+            
+            // Tenta encontrar exatamente a coluna da imagem enviada
+            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL MASTER FRANQUEADO"));
+            
+            // Fallback genérico se não achar
+            if (mgrIndex === -1) mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE"));
+            if (mgrIndex === -1) mgrIndex = 1; // Último recurso: Coluna B
 
             const rows = data.slice(1);
             const counts = {};

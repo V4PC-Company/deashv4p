@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Final)</title>
+    <title>V4 | CVC Dashboard (Histórico)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    
     <link rel="icon" href="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" type="image/png">
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -37,14 +36,14 @@
             overflow: hidden;
         }
 
-        /* TELA DE LOGIN */
+        /* LOGIN */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%); transition: opacity 0.5s ease; }
         .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
         .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
         .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* LAYOUT DASHBOARD */
+        /* DASHBOARD */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
@@ -55,9 +54,12 @@
         
         .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
         
-        .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;}
-        .header h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
-        
+        /* HEADER & FILTRO */
+        .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;}
+        .header-content h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
+        .month-select { background: var(--bg-tertiary); color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 8px; font-family: 'Inter'; font-size: 0.9rem; cursor: pointer; outline: none; }
+        .month-select:hover { border-color: var(--v4-neon-red); }
+
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
@@ -73,7 +75,7 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* CORREÇÃO DO MAPA */
+        /* MAPA */
         .map-container { width: 100%; height: 500px; background-color: #1a1a1a; border-radius: 16px; border: 1px solid #333; z-index: 1; position: relative; }
         .custom-pin { background-color: var(--v4-neon-red); width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px var(--v4-neon-red); }
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; font-family: 'Inter', sans-serif; }
@@ -81,8 +83,6 @@
         .leaflet-container { background: #141414 !important; }
 
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; z-index: 10; }
-        
         #error-display { display: none; position: fixed; bottom: 20px; right: 20px; background: #a30009; color: white; padding: 20px; border-radius: 10px; z-index: 10000; max-width: 400px; font-size: 0.9rem; border: 1px solid #ff1f2d; }
     </style>
 </head>
@@ -125,9 +125,15 @@
         <main class="main-content">
             <div id="section-overview" class="dashboard-section active-section">
                 <div class="header">
-                    <h1>Visão Geral de Expansão</h1>
-                    <p id="header-date">Dados consolidados: CARREGANDO...</p>
+                    <div class="header-content">
+                        <h1>Visão Geral de Expansão</h1>
+                        <p id="header-date">Selecione o período para análise</p>
+                    </div>
+                    <select id="monthFilter" class="month-select" onchange="applyDateFilter()">
+                        <option value="all">Todo o Período</option>
+                        </select>
                 </div>
+
                 <div class="grid">
                     <div class="card span-4">
                         <div class="card-header-flex">
@@ -153,7 +159,7 @@
             </div>
             
             <div id="section-leads" class="dashboard-section">
-                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária de novos cadastros.</p></div>
+                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária.</p></div>
                 <div class="grid"><div class="card span-12">
                     <span id="leads-title" class="card-title" style="margin-bottom: 20px;">VOLUME DIÁRIO DE LEADS</span>
                     <div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div>
@@ -161,19 +167,19 @@
             </div>
             
             <div id="section-geo" class="dashboard-section">
-                <div class="header"><h1>Expansão Geográfica</h1><p>Mapeamento das principais praças de interesse.</p></div>
-                <div class="grid"><div class="card span-12"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><span class="card-title" style="margin:0;">Mapa Interativo</span><div style="display: flex; gap: 15px; font-size: 0.75rem;"><span style="display: flex; align-items: center; gap: 5px;"><span style="width:10px; height:10px; background: #ff1f2d; border-radius:50%;"></span> Lead Ativo</span></div></div><div id="map" class="map-container"></div></div></div>
+                <div class="header"><h1>Expansão Geográfica</h1><p>Mapeamento das praças.</p></div>
+                <div class="grid"><div class="card span-12"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><span class="card-title" style="margin:0;">Mapa Interativo</span></div><div id="map" class="map-container"></div></div></div>
             </div>
             
             <div id="section-lives" class="dashboard-section">
-                <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live por dia.</p></div>
+                <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live.</p></div>
                 <div class="grid"><div class="card span-12"><span class="card-title" style="margin-bottom: 20px;">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
             </div>
 
             <div id="section-repasse" class="dashboard-section">
                 <div class="header">
                     <h1>Lista de Repasse</h1>
-                    <p>Consulta detalhada de registros de repasse.</p>
+                    <p>Consulta detalhada (Filtra também pelo mês selecionado).</p>
                 </div>
                 <div class="grid">
                     <div class="card span-12">
@@ -184,9 +190,9 @@
                         <div style="overflow-x: auto; max-height: 500px; border-radius: 8px; border: 1px solid #333;">
                             <table id="tabela-repasse" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
                                 <thead style="background: var(--bg-tertiary); position: sticky; top: 0; z-index: 5;">
-                                    </thead>
+                                </thead>
                                 <tbody>
-                                    </tbody>
+                                </tbody>
                             </table>
                         </div>
                     </div>
@@ -202,69 +208,23 @@
         const LIVE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS8KWWCjb7eYtXhLEpsgxgRI7wurO2HqO0YLcoSAKxkdLTuVGNiQ86HRMz5AKLaIJbnckxl9P4d6TJP/pub?gid=859560778&single=true&output=csv';
         const REPASSE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4VzCT82OlId7PUor1-cs7e-Phj47EhC5ViQPEtZ8QitfCBUBASg1WUlUIHb6ShIBH9vYSJqPkd3Yq/pub?gid=0&single=true&output=csv';
 
-        const COORDENADAS = {
-            "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333],
-            "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729],
-            "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345],
-            "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919],
-            "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016],
-            "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434],
-            "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733],
-            "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217],
-            "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770],
-            "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177],
-            "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648],
-            "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902],
-            "guarulhos": [-23.4515, -46.5333],
-            "campinas": [-22.9099, -47.0626],
-            "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068],
-            "sao goncalo": [-22.8275, -43.0631],
-            "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351],
-            "duque de caxias": [-22.7923, -43.3108],
-            "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201],
-            "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110],
-            "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034],
-            "sao bernardo do campo": [-23.6914, -46.5646],
-            "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450],
-            "nova iguacu": [-22.7561, -43.4607],
-            "santo andre": [-23.6638, -46.5383],
-            "osasco": [-23.5336, -46.7920],
-            "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009],
-            "jaboatao dos guararapes": [-8.1782, -35.0354],
-            "ribeirao preto": [-21.1704, -47.8103],
-            "uberlandia": [-18.9113, -48.2622],
-            "contagem": [-19.9326, -44.0538],
-            "sorocaba": [-23.5015, -47.4521],
-            "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731],
-            "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979],
-            "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128],
-            "juiz de fora": [-21.7661, -43.3503],
-            "londrina": [-23.3045, -51.1696],
-            "niteroi": [-22.8808, -43.1043],
-            "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480],
-            "palmeira dos indios": [-9.4079, -36.6322],
-            "juazeiro do norte": [-7.2372, -39.3222]
-        };
+        const COORDENADAS = { "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333], "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729], "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345], "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016], "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733], "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770], "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648], "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902], "guarulhos": [-23.4515, -46.5333], "campinas": [-22.9099, -47.0626], "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068], "sao goncalo": [-22.8275, -43.0631], "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351], "duque de caxias": [-22.7923, -43.3108], "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110], "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034], "sao bernardo do campo": [-23.6914, -46.5646], "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450], "nova iguacu": [-22.7561, -43.4607], "santo andre": [-23.6638, -46.5383], "osasco": [-23.5336, -46.7920], "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009], "jaboatao dos guararapes": [-8.1782, -35.0354], "ribeirao preto": [-21.1704, -47.8103], "uberlandia": [-18.9113, -48.2622], "contagem": [-19.9326, -44.0538], "sorocaba": [-23.5015, -47.4521], "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979], "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128], "juiz de fora": [-21.7661, -43.3503], "londrina": [-23.3045, -51.1696], "niteroi": [-22.8808, -43.1043], "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480], "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222] };
 
+        // Variáveis Globais para guardar os dados Originais
+        let RAW_LEADS = [];
+        let RAW_REPASSE = [];
+        let RAW_LIVE = [];
+        let RAW_REPASSE_HEADER = [];
+        
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
-
-        function updateDateLabels() {
-            const now = new Date();
-            const options = { month: 'long', year: 'numeric' };
-            const currentMonthYear = now.toLocaleDateString('pt-BR', options).toUpperCase();
-            document.getElementById('header-date').innerText = `Dados consolidados: ${currentMonthYear}`;
-            const monthOnly = now.toLocaleDateString('pt-BR', { month: 'long' }).toUpperCase();
-            document.getElementById('leads-title').innerText = `VOLUME DIÁRIO DE LEADS (${monthOnly})`;
-        }
 
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('login-screen').style.display = 'none';
                 document.getElementById('dashboard-container').style.display = 'flex';
-                updateDateLabels();
                 initCharts(); 
                 setTimeout(initMap, 500); 
                 fetchData();
@@ -294,62 +254,113 @@
             return result;
         }
 
-        function renderRepasseTable(data) {
-            const tableHead = document.querySelector("#tabela-repasse thead");
-            const tableBody = document.querySelector("#tabela-repasse tbody");
-            const headers = data[0];
-            tableHead.innerHTML = `<tr>${headers.map(h => `<th style="padding: 12px; border-bottom: 2px solid #333; color: white;">${h}</th>`).join('')}</tr>`;
-            tableBody.innerHTML = data.slice(1).map(row => {
-                if(row.length < 1 || !row[0]) return '';
-                return `<tr style="border-bottom: 1px solid #222;">${row.map(cell => `<td style="padding: 12px; color: var(--text-muted);">${cell}</td>`).join('')}</tr>`;
-            }).join('');
-            document.getElementById('total-repasse').innerText = `${data.length - 1} Registros Encontrados`;
-        }
-
-        function filtrarTabelaRepasse() {
-            const input = document.getElementById("filtroRepasse");
-            const filter = input.value.toUpperCase();
-            const table = document.getElementById("tabela-repasse");
-            const tr = table.getElementsByTagName("tr");
-            for (let i = 1; i < tr.length; i++) {
-                let txtValue = tr[i].textContent || tr[i].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+        // --- SISTEMA DE DATAS ---
+        function getMonthYearFromDate(dateStr) {
+            // Espera formato DD/MM/YYYY
+            if(!dateStr) return null;
+            const parts = dateStr.trim().split(' ')[0].split('/');
+            if(parts.length >= 2) {
+                // Retorna YYYY-MM para ordenação fácil
+                const y = parts[2] && parts[2].length === 4 ? parts[2] : new Date().getFullYear();
+                const m = parts[1].padStart(2, '0');
+                return `${y}-${m}`;
             }
+            return null;
         }
 
-        // --- LÓGICA ATUALIZADA DO GRÁFICO DE REPASSE ---
-        function updateRepasseChart(data) {
-            // 1. Encontrar o índice da coluna "Gerente"
-            const headers = data[0].map(h => h.toUpperCase().trim());
-            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE EXECUTIVO") || h.includes("GERENTE"));
-            
-            // Fallback: Se não achar, usa a coluna 1
-            if (mgrIndex === -1) mgrIndex = 1; 
-
-            const rows = data.slice(1);
-            const counts = {};
-            
-            // 2. Contar frequência
-            rows.forEach(r => {
-                if(!r[0]) return;
-                const rawName = r[mgrIndex] ? r[mgrIndex].trim() : "N/D";
-                // Limpeza básica de nome se necessário (opcional)
-                const name = rawName === "" ? "N/D" : rawName;
-                counts[name] = (counts[name] || 0) + 1;
+        function populateMonthFilter() {
+            const months = new Set();
+            // Escaneia Leads para achar meses
+            RAW_LEADS.forEach(l => {
+                const my = getMonthYearFromDate(l.data);
+                if(my) months.add(my);
+            });
+            // Escaneia Repasse
+            RAW_REPASSE.forEach(r => {
+                // Assume coluna 0 é data, senão tenta achar
+                const my = getMonthYearFromDate(r[0]); 
+                if(my) months.add(my);
             });
 
-            // 3. Ordenar do maior para o menor
-            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10); // Top 10
+            const sortedMonths = Array.from(months).sort().reverse(); // Decrescente
             
-            chartRepasseOverview.data.labels = sorted.map(i => i[0]);
-            chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
-            chartRepasseOverview.update();
+            const select = document.getElementById('monthFilter');
+            // Mantém a opção "Todo o Período" e adiciona as outras
+            select.innerHTML = '<option value="all">Todo o Período</option>';
+            
+            sortedMonths.forEach(m => {
+                const [ano, mes] = m.split('-');
+                const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.innerText = `${nomeMes} / ${ano}`;
+                select.appendChild(opt);
+            });
         }
 
+        function applyDateFilter() {
+            const selected = document.getElementById('monthFilter').value;
+            
+            // Filtra Leads
+            let filteredLeads = RAW_LEADS;
+            if(selected !== 'all') {
+                filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
+            }
+
+            // Filtra Repasse
+            let filteredRepasse = RAW_REPASSE;
+            if(selected !== 'all') {
+                filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
+            }
+
+            // Filtra Lives (Recalcula stats)
+            let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
+            let filteredLiveTimeline = {};
+            
+            // Precisamos reprocessar o CSV raw das lives se quisermos filtrar, 
+            // mas como já processamos antes, vamos usar o RAW_LIVE salvo (linhas)
+            // Assumindo que RAW_LIVE guarda linhas cruas
+            
+            RAW_LIVE.forEach(row => {
+                const rowString = row.join(' ');
+                let rowDate = null;
+                // Tenta achar data na linha
+                if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                    const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/);
+                    if(match) rowDate = match[1];
+                }
+                
+                // Se tem filtro e a data não bate, ignora
+                if(selected !== 'all') {
+                    if(!rowDate || getMonthYearFromDate(rowDate) !== selected) return;
+                }
+
+                const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
+                if (statusCell) {
+                    if (statusCell.toLowerCase() === 'presente') filteredLiveStats.presente++;
+                    if (statusCell.toLowerCase() === 'ausente') filteredLiveStats.ausente++;
+                    if (statusCell.toLowerCase() === 'agendado') filteredLiveStats.agendado++;
+                    
+                    if (rowDate) {
+                         const matchTimeline = rowDate.match(/(\d{2}\/\d{2})/);
+                         if(matchTimeline) {
+                             filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
+                         }
+                    }
+                }
+            });
+
+            // Atualiza UI
+            updateDashboard(filteredLeads, filteredLiveStats, filteredLiveTimeline);
+            
+            // Atualiza Tabela e Gráfico de Repasse
+            // Recria array com header
+            const repasseWithHeader = [RAW_REPASSE_HEADER, ...filteredRepasse];
+            renderRepasseTable(repasseWithHeader);
+            updateRepasseChart(repasseWithHeader);
+        }
+
+        // --- FETCH ORIGINAL MODIFICADO PARA GUARDAR DADOS RAW ---
         async function fetchData() {
             try {
                 const [resLeads, resLive, resRepasse] = await Promise.all([
@@ -358,38 +369,13 @@
                     fetch(REPASSE_URL).then(r => r.text())
                 ]);
 
-                // Repasse
+                // 1. Repasse
                 const rowsRepasse = parseCSV(resRepasse);
-                renderRepasseTable(rowsRepasse);
-                updateRepasseChart(rowsRepasse); // Chama a função atualizada
+                RAW_REPASSE_HEADER = rowsRepasse[0];
+                RAW_REPASSE = rowsRepasse.slice(1); // Guarda sem cabeçalho
 
-                // Leads
+                // 2. Leads
                 const rowsLeads = parseCSV(resLeads);
-                
-                // Lives
-                let liveStats = { presente: 0, ausente: 0, agendado: 0 };
-                let liveTimeline = {};
-                
-                if(resLive) {
-                    const rowsLive = parseCSV(resLive);
-                    let currentLiveDate = null;
-                    rowsLive.forEach(row => {
-                        const rowString = row.join(' ');
-                        if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                            const match = rowString.match(/(\d{2}\/\d{2})/);
-                            if(match) currentLiveDate = match[1]; 
-                            return;
-                        }
-                        const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
-                        if (statusCell) {
-                            if (statusCell.toLowerCase() === 'presente') liveStats.presente++;
-                            if (statusCell.toLowerCase() === 'ausente') liveStats.ausente++;
-                            if (statusCell.toLowerCase() === 'agendado') liveStats.agendado++;
-                            if (currentLiveDate) liveTimeline[currentLiveDate] = (liveTimeline[currentLiveDate] || 0) + 1;
-                        }
-                    });
-                }
-
                 const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
@@ -398,12 +384,11 @@
                     STATUS_COLS: []
                 };
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
-
                 if(IDX.DATA === -1) IDX.DATA = 0;
                 if(IDX.CIDADE === -1) IDX.CIDADE = 4;
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
-                const leads = rowsLeads.slice(1).map(cols => {
+                RAW_LEADS = rowsLeads.slice(1).map(cols => {
                     if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
                     let finalStatus = "SEM RESPOSTA";
@@ -423,8 +408,65 @@
                     return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus, statusK: statusK };
                 }).filter(i => i !== null);
 
-                updateDashboard(leads, liveStats, liveTimeline);
+                // 3. Lives (Guarda RAW para filtrar depois)
+                if(resLive) {
+                    RAW_LIVE = parseCSV(resLive);
+                }
+
+                // INICIA O FILTRO E A VISÃO GERAL
+                populateMonthFilter();
+                applyDateFilter(); // Aplica 'all' inicialmente
+
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
+        }
+
+        function renderRepasseTable(data) {
+            const tableHead = document.querySelector("#tabela-repasse thead");
+            const tableBody = document.querySelector("#tabela-repasse tbody");
+            const headers = data[0];
+            tableHead.innerHTML = `<tr>${headers.map(h => `<th style="padding: 12px; border-bottom: 2px solid #333; color: white;">${h}</th>`).join('')}</tr>`;
+            tableBody.innerHTML = data.slice(1).map(row => {
+                if(row.length < 1 || !row[0]) return '';
+                return `<tr style="border-bottom: 1px solid #222;">${row.map(cell => `<td style="padding: 12px; color: var(--text-muted);">${cell}</td>`).join('')}</tr>`;
+            }).join('');
+            document.getElementById('total-repasse').innerText = `${data.length - 1} Registros`;
+        }
+
+        function filtrarTabelaRepasse() {
+            const input = document.getElementById("filtroRepasse");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("tabela-repasse");
+            const tr = table.getElementsByTagName("tr");
+            for (let i = 0; i < tr.length; i++) {
+                let txtValue = tr[i].textContent || tr[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        function updateRepasseChart(data) {
+            // Usa lógica do Gerente
+            const headers = data[0].map(h => h.toUpperCase().trim());
+            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE EXECUTIVO") || h.includes("GERENTE"));
+            if (mgrIndex === -1) mgrIndex = 1; 
+
+            const rows = data.slice(1);
+            const counts = {};
+            rows.forEach(r => {
+                if(!r[0]) return;
+                const rawName = r[mgrIndex] ? r[mgrIndex].trim() : "N/D";
+                const name = rawName === "" ? "N/D" : rawName;
+                counts[name] = (counts[name] || 0) + 1;
+            });
+
+            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10);
+            
+            chartRepasseOverview.data.labels = sorted.map(i => i[0]);
+            chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
+            chartRepasseOverview.update();
         }
 
         function updateDashboard(leads, liveStats, liveTimeline) {
@@ -503,20 +545,8 @@
             
             chartQualidade = new Chart(document.getElementById('chartQualidade'), {
                 type: 'pie', 
-                data: { 
-                    labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'],
-                    datasets: [{ 
-                        data: [0, 0, 0], 
-                        backgroundColor: ['#ff1f2d', '#00c853', '#333333'], 
-                        borderWidth: 0 
-                    }] 
-                },
-                options: { 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } 
-                    } 
-                }
+                data: { labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ff1f2d', '#00c853', '#333333'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
             });
 
             const ctxCid = document.getElementById('chartCidades').getContext('2d');
@@ -531,27 +561,10 @@
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
         
-            // CHART REPASSE (GERENTES)
             chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
                 type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Volume de Repasses',
-                        data: [],
-                        backgroundColor: '#ff1f2d',
-                        borderRadius: 5,
-                        barThickness: 30
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        y: { beginAtZero: true, grid: { color: '#222' } }, 
-                        x: { grid: { display: false } } 
-                    }
-                }
+                data: { labels: [], datasets: [{ label: 'Volume de Repasses', data: [], backgroundColor: '#ff1f2d', borderRadius: 5, barThickness: 30 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } } }
             });
         }
 

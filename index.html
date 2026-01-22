@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V4 | CVC Dashboard (Final)</title>
+    <title>V4 | CVC Dashboard (2026+)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/webp;base64,UklGRp4DAABXRUJQVlA4IJIDAADQGACdASpQAFAAPpE6mUgloyKhJ7VeuLASCWwAwNm0/pPQibU69+Sn4wdQXwh4R/HDqpjr9kv3z7wPeB/lfYf5gH6Xf5H+UdZ/zAftn+wHvE/gB2AH9u6lz0AP1A9Kj91fhX/c39jPaWcru3jov0zhW9PU98+byajkjDFAbXoNu8wmuxYjZlGeKQRt6t6fm8telKsGsCGRAvJItQjGLYBsYC7Clke1NwUIqiVP6MLX4s32uk0XiwOYRmQaWFH51pWyxrWqOw41j0D8j5Hui0AA/v55tLcV4Y6mmmK/BuN3V6PZpPf1qoPqLCQHdSnbtv2a9czILQkoWChlU+W8jk1hh1CG1bBwQm11hFcnUyz8tmcIGUOlm5/KZmKX5S/yFMpIF5Ks1tNhOKyBsyf8/NLis71L+0q1eDdBMCRjSEhE3lo5yoSWIy+sIfH2WWfJbXLjN9WHWnDdJ9ZG6VGisCNgQSdmtkCcEhKJd8rUabrLeYRFMk0YJxK0NSX/QVYd62GykOxoZgLBcpsTgvQnyguq2JftBApkXdP/9fw3BmHgVrDkA6JnG3IyAXjKYvUx+r1Aw79CnP31UYIVw6zH9ip8fkklQaSNLi7fNaNG0BB7PK+qg/5C5JVRlJQCTov8dNEsPOyyNy2Svs1hDehoaXUo0POh5WrBDEYFZcZG1JoDVe1fprQvvr/RctYH9vfJHgPnM8brHCl96vcXqQcgzMLAbiajQr2ZIL5YuUXoRNyOBAuj4Ng2QN5rSQeQaWG7Kkj7iqk8yh80M0wrqAgtP7fyHFt+zgfx1zFB0BRjcdDA6oPmA1MytL3G2NGf9iKM30uVwGcvh2/bYQMbYIz/G211wIPkUrMDArQFNyXeUv8/WoMcN5YmWrphrUpOd2qfuAXZrse5nUBVhHpfua2L1+kPbvAFvz85aR3eywiSx/S82jx3n6Nt1WGuVbo7ZimNVLSiW0UEv6PxQQr0ztwCnlx8A5GoB+a8MCWRWziiXbiWPagExpf8xPxpy40AnTZT4xUJMVSA3kA1HgbS9Agu3IC+ric/Aj26/Yyv27flEDzMxM+TlvfBD8oi498PFYQH4+ric7bP27nwRcb8OeBLTIAeTW4lRpPVb8M2oCQDafZxS2gqwq6/yVN5+/5p9OA4Qi5uGbU5KBIMm+Cf109IfwLfrn0DrfzxjgvxoyAgfGe0bsB8PGWQF+dBAf9t6bLdCEAAAA==" type="image/png">
 
@@ -36,14 +36,14 @@
             overflow: hidden;
         }
 
-        /* TELA DE LOGIN */
+        /* LOGIN */
         #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; background-image: radial-gradient(circle at center, rgba(255,31,45,0.1) 0%, rgba(10,10,10,1) 70%); transition: opacity 0.5s ease; }
         .login-box { background: var(--bg-secondary); padding: 40px; border-radius: 24px; width: 450px; text-align: center; border: 1px solid #2a2a2a; box-shadow: 0 0 40px rgba(255, 31, 45, 0.15); display: flex; flex-direction: column; align-items: center; }
         .login-input { width: 100%; padding: 15px; margin-bottom: 20px; background: var(--bg-main); border: 1px solid #333; border-radius: 12px; color: var(--text-bright); outline: none; }
         .login-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, var(--v4-dark-red), var(--v4-neon-red)); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .login-btn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(255, 31, 45, 0.5); }
 
-        /* LAYOUT DASHBOARD */
+        /* DASHBOARD */
         #dashboard-container { display: none; height: 100vh; }
         .sidebar { width: 280px; background: var(--bg-secondary); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid #222; }
         .main-content { flex: 1; padding: 40px; overflow-y: auto; background: radial-gradient(circle at top right, rgba(20,20,20,1) 0%, rgba(10,10,10,1) 100%); }
@@ -54,11 +54,12 @@
         
         .user-profile { margin-top: auto; background: var(--bg-tertiary); padding: 15px; border-radius: 16px; display: flex; align-items: center; gap: 15px; border: 1px solid #333; }
         
-        /* HEADER COM FILTRO */
+        /* HEADER & FILTRO */
         .header { margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;}
         .header-content h1 { font-size: 1.8rem; margin-bottom: 5px; color: white; }
         .month-select { background: var(--bg-tertiary); color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 8px; font-family: 'Inter'; font-size: 0.9rem; cursor: pointer; outline: none; min-width: 200px; }
-        
+        .month-select:hover { border-color: var(--v4-neon-red); }
+
         .card { background: var(--bg-secondary); border-radius: 20px; padding: 25px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; }
         .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--v4-neon-red), transparent); opacity: 0.5; }
         .card.yellow-accent::before { background: linear-gradient(90deg, var(--cvc-neon-yellow), transparent); }
@@ -74,15 +75,14 @@
         .active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* CORREÇÃO DO MAPA */
+        /* MAPA */
         .map-container { width: 100%; height: 500px; background-color: #1a1a1a; border-radius: 16px; border: 1px solid #333; z-index: 1; position: relative; }
         .custom-pin { background-color: var(--v4-neon-red); width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px var(--v4-neon-red); }
         .leaflet-popup-content-wrapper { background: #141414; color: white; border: 1px solid #333; font-family: 'Inter', sans-serif; }
         .leaflet-popup-tip { background: #141414; border: 1px solid #333; }
-        .leaflet-container { background: #141414 !important; } 
+        .leaflet-container { background: #141414 !important; }
 
         .chart-wrapper { position: relative; height: 220px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        
         #error-display { display: none; position: fixed; bottom: 20px; right: 20px; background: #a30009; color: white; padding: 20px; border-radius: 10px; z-index: 10000; max-width: 400px; font-size: 0.9rem; border: 1px solid #ff1f2d; }
     </style>
 </head>
@@ -131,7 +131,7 @@
                     </div>
                     <select id="monthFilter" class="month-select" onchange="applyDateFilter()">
                         <option value="all">Todo o Período</option>
-                    </select>
+                        </select>
                 </div>
 
                 <div class="grid">
@@ -214,10 +214,14 @@
         let RAW_LEADS = [];
         let RAW_REPASSE = [];
         let RAW_REPASSE_HEADER = [];
+        
+        // DADOS ESTRUTURADOS DE LIVE (SOLUÇÃO PARA O BUG)
         let STRUCT_LIVE_DATA = []; 
+        
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
+
         function enterDashboard() {
             document.getElementById('login-screen').style.opacity = '0';
             setTimeout(() => {
@@ -228,6 +232,7 @@
                 fetchData();
             }, 500);
         }
+
         function switchTab(t, b) {
             document.querySelectorAll('.dashboard-section').forEach(e=>e.style.display='none');
             document.getElementById(t).style.display='block';
@@ -235,6 +240,7 @@
             document.getElementById(b).classList.add('active');
             if(t==='section-geo') setTimeout(()=> { if(map) map.invalidateSize(); }, 200);
         }
+
         function parseCSV(text) {
             const lines = text.split('\n');
             const separator = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
@@ -250,34 +256,16 @@
             return result;
         }
 
-        // --- SISTEMA INTELIGENTE DE DATAS (CORREÇÃO DE DIA/MÊS) ---
-        function parseSmartDate(dateStr) {
+        // --- SISTEMA DE DATAS ---
+        function getMonthYearFromDate(dateStr) {
             if(!dateStr) return null;
-            // Remove hora se houver
-            const cleanStr = dateStr.trim().split(' ')[0];
-            const parts = cleanStr.split('/');
-            if(parts.length < 3) return null;
-
-            let day = parseInt(parts[0], 10);
-            let month = parseInt(parts[1], 10);
-            let year = parseInt(parts[2], 10);
-
-            // CORREÇÃO: Se o 2º número > 12, então o formato é MM/DD/YYYY (Americano)
-            if (month > 12) {
-                // Inverte: o que achávamos que era mês é dia, e vice versa
-                const temp = day;
-                day = month;
-                month = temp;
+            const parts = dateStr.trim().split(' ')[0].split('/');
+            if(parts.length >= 2) {
+                const y = parts[2] && parts[2].length === 4 ? parts[2] : new Date().getFullYear();
+                const m = parts[1].padStart(2, '0');
+                return `${y}-${m}`;
             }
-            
-            if(year < 100) year += 2000;
-
-            // Retorna YYYY-MM para filtro e YYYY-MM-DD para timeline
-            return {
-                full: `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`,
-                monthKey: `${year}-${String(month).padStart(2,'0')}`,
-                displayDay: `${String(day).padStart(2,'0')}/${String(month).padStart(2,'0')}`
-            };
+            return null;
         }
 
         function populateMonthFilter() {
@@ -285,21 +273,20 @@
             
             // 1. Leads
             RAW_LEADS.forEach(l => {
-                const dt = parseSmartDate(l.data);
-                // REMOVIDA TRAVA DE 2026 - MOSTRA TUDO
-                if(dt) months.add(dt.monthKey);
+                const my = getMonthYearFromDate(l.data);
+                if(my && my >= '2026-01') months.add(my);
             });
             
             // 2. Repasse
             RAW_REPASSE.forEach(r => {
-                const dt = parseSmartDate(r[0]); 
-                if(dt) months.add(dt.monthKey);
+                const my = getMonthYearFromDate(r[0]); 
+                if(my && my >= '2026-01') months.add(my);
             });
 
-            // 3. Lives 
+            // 3. Lives (Agora usando dados estruturados)
             STRUCT_LIVE_DATA.forEach(item => {
-                const dt = parseSmartDate(item.date);
-                if(dt) months.add(dt.monthKey);
+                const my = getMonthYearFromDate(item.date);
+                if(my && my >= '2026-01') months.add(my);
             });
 
             const sortedMonths = Array.from(months).sort().reverse(); 
@@ -323,30 +310,23 @@
             // 1. Filtra Leads
             let filteredLeads = RAW_LEADS;
             if(selected !== 'all') {
-                filteredLeads = RAW_LEADS.filter(l => {
-                    const dt = parseSmartDate(l.data);
-                    return dt && dt.monthKey === selected;
-                });
+                filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
             }
 
             // 2. Filtra Repasse
             let filteredRepasse = RAW_REPASSE;
             if(selected !== 'all') {
-                filteredRepasse = RAW_REPASSE.filter(r => {
-                    const dt = parseSmartDate(r[0]);
-                    return dt && dt.monthKey === selected;
-                });
+                filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
             }
 
-            // 3. Filtra Lives 
+            // 3. Filtra Lives (CORREÇÃO DE BUG: Usa dados estruturados com memória de data)
             let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
             let filteredLiveTimeline = {};
             
             STRUCT_LIVE_DATA.forEach(item => {
-                const dt = parseSmartDate(item.date);
                 // Filtra pela data "herdada" do cabeçalho
                 if(selected !== 'all') {
-                    if(!dt || dt.monthKey !== selected) return;
+                    if(getMonthYearFromDate(item.date) !== selected) return;
                 }
 
                 // Computa stats
@@ -355,9 +335,10 @@
                 if (s === 'ausente') filteredLiveStats.ausente++;
                 if (s === 'agendado') filteredLiveStats.agendado++;
                 
-                // Computa Timeline (DD/MM)
-                if(dt) {
-                    filteredLiveTimeline[dt.displayDay] = (filteredLiveTimeline[dt.displayDay] || 0) + 1;
+                // Computa Timeline
+                const matchTimeline = item.date.match(/(\d{2}\/\d{2})/);
+                if(matchTimeline) {
+                    filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
                 }
             });
 
@@ -398,9 +379,7 @@
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [11,12,13,14,15];
 
                 RAW_LEADS = rowsLeads.slice(1).map(cols => {
-                    if(cols.length < 5) return null;
-                    // Validação rápida de data
-                    if(!cols[IDX.DATA] || cols[IDX.DATA].length < 6) return null;
+                    if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
@@ -411,6 +390,7 @@
                         if (val.includes("PARTICIPOU") || val.includes("AGENDADA") || val.includes("CONTATADO")) { finalStatus = val; foundMeaningful = true; }
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
+
                     let statusK = (cols[IDX.STATUS_K] || "").toUpperCase().trim();
                     if (statusK === "") statusK = "ATIVO"; 
 
@@ -418,7 +398,7 @@
                     return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus, statusK: statusK };
                 }).filter(i => i !== null);
 
-                // 3. Lives
+                // 3. Lives (PROCESSAMENTO ESTRUTURADO PARA CORRIGIR BUG DO FILTRO)
                 if(resLive) {
                     const rowsLive = parseCSV(resLive);
                     let currentLiveDate = null;
@@ -426,16 +406,22 @@
 
                     rowsLive.forEach(row => {
                         const rowString = row.join(' ');
-                        // Busca header de data (ex: 8/15/2022)
-                        if (rowString.match(/\d{1,2}\/\d{1,2}\/\d{4}/)) {
-                            const match = rowString.match(/(\d{1,2}\/\d{1,2}\/\d{4})/);
+                        
+                        // Detecta cabeçalho de data e memoriza
+                        if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                            const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/);
                             if(match) currentLiveDate = match[1]; 
-                            return; 
+                            return; // Pula a linha do cabeçalho
                         }
+
+                        // Se temos uma data na memória, processa os status das linhas abaixo
                         if(currentLiveDate) {
                             const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
                             if (statusCell) {
-                                STRUCT_LIVE_DATA.push({ date: currentLiveDate, status: statusCell });
+                                STRUCT_LIVE_DATA.push({
+                                    date: currentLiveDate,
+                                    status: statusCell
+                                });
                             }
                         }
                     });
@@ -476,7 +462,10 @@
 
         function updateRepasseChart(data) {
             const headers = data[0].map(h => h.toUpperCase().trim());
+            // CORREÇÃO: Busca exata pela coluna "Gerente Regional Master Franqueado"
             let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL MASTER FRANQUEADO"));
+            
+            // Fallbacks
             if (mgrIndex === -1) mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE"));
             if (mgrIndex === -1) mgrIndex = 1; 
 
@@ -490,6 +479,7 @@
             });
 
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10);
+            
             chartRepasseOverview.data.labels = sorted.map(i => i[0]);
             chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
             chartRepasseOverview.update();
@@ -523,31 +513,33 @@
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
             chartLive.update();
 
-            // LEADS TIMELINE (AGORA RESPEITANDO O FILTRO DE DATA NOVO)
+            // CHART LEADS TIMELINE (FILTRO APLICADO)
             const dates = {};
             leads.forEach(l => { 
-                const dt = parseSmartDate(l.data);
-                if(dt) {
-                    // Agrupa por Dia (DD/MM)
-                    dates[dt.displayDay] = (dates[dt.displayDay]||0) + 1;
+                let dStr = l.data.trim();
+                const parts = dStr.split(' ')[0].split('/'); 
+                if(parts.length >= 2) {
+                    const displayKey = `${parts[0]}/${parts[1]}`;
+                    dates[displayKey] = (dates[displayKey]||0) + 1;
                 }
             });
-            // Ordena cronologicamente (Dia/Mes)
+
             const labels = Object.keys(dates).sort((a, b) => {
                 const [d1, m1] = a.split('/');
                 const [d2, m2] = b.split('/');
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
             });
+
             chartLeadsTimeline.data.labels = labels;
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
-            // LIVES TIMELINE
             const liveLabels = Object.keys(liveTimeline).sort((a, b) => {
                 const [d1, m1] = a.split('/');
                 const [d2, m2] = b.split('/');
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
             });
+            
             chartLivesTimeline.data.labels = liveLabels;
             chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
             chartLivesTimeline.update();
@@ -567,21 +559,40 @@
 
         function initCharts() {
             Chart.defaults.color = '#8c8c8c'; Chart.defaults.font.family = 'Inter'; Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-            chartQualidade = new Chart(document.getElementById('chartQualidade'), { type: 'pie', data: { labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ff1f2d', '#00c853', '#333333'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
+            
+            chartQualidade = new Chart(document.getElementById('chartQualidade'), {
+                type: 'pie', 
+                data: { labels: ['Ativos (Novos)', 'Qualificados', 'Inativos'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#ff1f2d', '#00c853', '#333333'], borderWidth: 0 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } }
+            });
+
             const ctxCid = document.getElementById('chartCidades').getContext('2d');
             const grad = ctxCid.createLinearGradient(0,0,0,300); grad.addColorStop(0,'#ff1f2d'); grad.addColorStop(1,'#600000');
             chartCidades = new Chart(ctxCid, { type: 'bar', data: { labels: [], datasets: [{ label: 'Leads', data: [], backgroundColor: grad, borderRadius: 6, barThickness: 25 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false } }, y: { grid: { display: false } } } } });
+            
             chartReuniao = new Chart(document.getElementById('chartReuniao'), { type: 'pie', data: { labels: ['Presente', 'Agendado', 'Ausente'], datasets: [{ data: [0,0,0], backgroundColor: ['#00c853', '#0D47A1', '#d32f2f'], borderWidth: 0 }] }, options: { maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { boxWidth: 10, usePointStyle: true, color: '#fff' } } } } });
+            
             chartLive = new Chart(document.getElementById('chartLive'), { type: 'bar', indexAxis: 'y', data: { labels: ['SEM RESP', 'CONTATADO', 'BANT4', 'PARTICIPOU'], datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff1f2d', '#ffd700', '#00c853', '#00c853'], borderRadius: 4 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } } } });
+
             const commonLineOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#222' } }, y: { grid: { color: '#222' }, beginAtZero: true } } };
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
-            chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Volume de Repasses', data: [], backgroundColor: '#ff1f2d', borderRadius: 5, barThickness: 30 }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } } } });
+        
+            chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
+                type: 'bar',
+                data: { labels: [], datasets: [{ label: 'Volume de Repasses', data: [], backgroundColor: '#ff1f2d', borderRadius: 5, barThickness: 30 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } } }
+            });
         }
+
         function initMap() { 
             if(!map) { 
                 map = L.map('map').setView([-14.235, -51.925], 4); 
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19 }).addTo(map); 
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; OpenStreetMap &copy; CARTO',
+                    subdomains: 'abcd',
+                    maxZoom: 19
+                }).addTo(map); 
             } 
         }
     </script>

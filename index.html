@@ -159,7 +159,7 @@
             </div>
             
             <div id="section-leads" class="dashboard-section">
-                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária.</p></div>
+                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária (Filtro Aplicado).</p></div>
                 <div class="grid"><div class="card span-12">
                     <span id="leads-title" class="card-title" style="margin-bottom: 20px;">VOLUME DIÁRIO DE LEADS</span>
                     <div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div>
@@ -210,11 +210,13 @@
 
         const COORDENADAS = { "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333], "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729], "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345], "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016], "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733], "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770], "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648], "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902], "guarulhos": [-23.4515, -46.5333], "campinas": [-22.9099, -47.0626], "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068], "sao goncalo": [-22.8275, -43.0631], "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351], "duque de caxias": [-22.7923, -43.3108], "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110], "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034], "sao bernardo do campo": [-23.6914, -46.5646], "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450], "nova iguacu": [-22.7561, -43.4607], "santo andre": [-23.6638, -46.5383], "osasco": [-23.5336, -46.7920], "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009], "jaboatao dos guararapes": [-8.1782, -35.0354], "ribeirao preto": [-21.1704, -47.8103], "uberlandia": [-18.9113, -48.2622], "contagem": [-19.9326, -44.0538], "sorocaba": [-23.5015, -47.4521], "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979], "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128], "juiz de fora": [-21.7661, -43.3503], "londrina": [-23.3045, -51.1696], "niteroi": [-22.8808, -43.1043], "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480], "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222] };
 
-        // Variáveis Globais para guardar os dados Originais
+        // Variáveis Globais
         let RAW_LEADS = [];
         let RAW_REPASSE = [];
-        let RAW_LIVE = [];
         let RAW_REPASSE_HEADER = [];
+        
+        // DADOS ESTRUTURADOS DE LIVE (SOLUÇÃO PARA O BUG)
+        let STRUCT_LIVE_DATA = []; 
         
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
@@ -256,11 +258,9 @@
 
         // --- SISTEMA DE DATAS ---
         function getMonthYearFromDate(dateStr) {
-            // Espera formato DD/MM/YYYY
             if(!dateStr) return null;
             const parts = dateStr.trim().split(' ')[0].split('/');
             if(parts.length >= 2) {
-                // Retorna YYYY-MM para ordenação fácil
                 const y = parts[2] && parts[2].length === 4 ? parts[2] : new Date().getFullYear();
                 const m = parts[1].padStart(2, '0');
                 return `${y}-${m}`;
@@ -271,24 +271,27 @@
         function populateMonthFilter() {
             const months = new Set();
             
-            // 1. Escaneia Leads para achar meses
+            // 1. Leads
             RAW_LEADS.forEach(l => {
                 const my = getMonthYearFromDate(l.data);
-                // LÓGICA DE CORTE: Apenas datas >= Janeiro de 2026
                 if(my && my >= '2026-01') months.add(my);
             });
             
-            // 2. Escaneia Repasse
+            // 2. Repasse
             RAW_REPASSE.forEach(r => {
                 const my = getMonthYearFromDate(r[0]); 
-                // LÓGICA DE CORTE: Apenas datas >= Janeiro de 2026
                 if(my && my >= '2026-01') months.add(my);
             });
 
-            const sortedMonths = Array.from(months).sort().reverse(); // Decrescente
+            // 3. Lives (Agora usando dados estruturados)
+            STRUCT_LIVE_DATA.forEach(item => {
+                const my = getMonthYearFromDate(item.date);
+                if(my && my >= '2026-01') months.add(my);
+            });
+
+            const sortedMonths = Array.from(months).sort().reverse(); 
             
             const select = document.getElementById('monthFilter');
-            // Mantém a opção "Todo o Período" e adiciona as outras
             select.innerHTML = '<option value="all">Todo o Período</option>';
             
             sortedMonths.forEach(m => {
@@ -304,62 +307,50 @@
         function applyDateFilter() {
             const selected = document.getElementById('monthFilter').value;
             
-            // Filtra Leads
+            // 1. Filtra Leads
             let filteredLeads = RAW_LEADS;
             if(selected !== 'all') {
                 filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
             }
 
-            // Filtra Repasse
+            // 2. Filtra Repasse
             let filteredRepasse = RAW_REPASSE;
             if(selected !== 'all') {
                 filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
             }
 
-            // Filtra Lives (Recalcula stats)
+            // 3. Filtra Lives (CORREÇÃO DE BUG: Usa dados estruturados com memória de data)
             let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
             let filteredLiveTimeline = {};
             
-            RAW_LIVE.forEach(row => {
-                const rowString = row.join(' ');
-                let rowDate = null;
-                // Tenta achar data na linha
-                if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                    const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/);
-                    if(match) rowDate = match[1];
-                }
-                
-                // Se tem filtro e a data não bate, ignora
+            STRUCT_LIVE_DATA.forEach(item => {
+                // Filtra pela data "herdada" do cabeçalho
                 if(selected !== 'all') {
-                    if(!rowDate || getMonthYearFromDate(rowDate) !== selected) return;
+                    if(getMonthYearFromDate(item.date) !== selected) return;
                 }
 
-                const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
-                if (statusCell) {
-                    if (statusCell.toLowerCase() === 'presente') filteredLiveStats.presente++;
-                    if (statusCell.toLowerCase() === 'ausente') filteredLiveStats.ausente++;
-                    if (statusCell.toLowerCase() === 'agendado') filteredLiveStats.agendado++;
-                    
-                    if (rowDate) {
-                         const matchTimeline = rowDate.match(/(\d{2}\/\d{2})/);
-                         if(matchTimeline) {
-                             filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
-                         }
-                    }
+                // Computa stats
+                const s = item.status.toLowerCase();
+                if (s === 'presente') filteredLiveStats.presente++;
+                if (s === 'ausente') filteredLiveStats.ausente++;
+                if (s === 'agendado') filteredLiveStats.agendado++;
+                
+                // Computa Timeline
+                const matchTimeline = item.date.match(/(\d{2}\/\d{2})/);
+                if(matchTimeline) {
+                    filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
                 }
             });
 
-            // Atualiza UI
+            // Atualiza Dashboard
             updateDashboard(filteredLeads, filteredLiveStats, filteredLiveTimeline);
             
             // Atualiza Tabela e Gráfico de Repasse
-            // Recria array com header
             const repasseWithHeader = [RAW_REPASSE_HEADER, ...filteredRepasse];
             renderRepasseTable(repasseWithHeader);
             updateRepasseChart(repasseWithHeader);
         }
 
-        // --- FETCH ORIGINAL MODIFICADO PARA GUARDAR DADOS RAW ---
         async function fetchData() {
             try {
                 const [resLeads, resLive, resRepasse] = await Promise.all([
@@ -371,7 +362,7 @@
                 // 1. Repasse
                 const rowsRepasse = parseCSV(resRepasse);
                 RAW_REPASSE_HEADER = rowsRepasse[0];
-                RAW_REPASSE = rowsRepasse.slice(1); // Guarda sem cabeçalho
+                RAW_REPASSE = rowsRepasse.slice(1); 
 
                 // 2. Leads
                 const rowsLeads = parseCSV(resLeads);
@@ -407,14 +398,37 @@
                     return { data: cols[IDX.DATA], cidade: rawCity, status: finalStatus, statusK: statusK };
                 }).filter(i => i !== null);
 
-                // 3. Lives (Guarda RAW para filtrar depois)
+                // 3. Lives (PROCESSAMENTO ESTRUTURADO PARA CORRIGIR BUG DO FILTRO)
                 if(resLive) {
-                    RAW_LIVE = parseCSV(resLive);
+                    const rowsLive = parseCSV(resLive);
+                    let currentLiveDate = null;
+                    STRUCT_LIVE_DATA = [];
+
+                    rowsLive.forEach(row => {
+                        const rowString = row.join(' ');
+                        
+                        // Detecta cabeçalho de data e memoriza
+                        if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                            const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/);
+                            if(match) currentLiveDate = match[1]; 
+                            return; // Pula a linha do cabeçalho
+                        }
+
+                        // Se temos uma data na memória, processa os status das linhas abaixo
+                        if(currentLiveDate) {
+                            const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
+                            if (statusCell) {
+                                STRUCT_LIVE_DATA.push({
+                                    date: currentLiveDate,
+                                    status: statusCell
+                                });
+                            }
+                        }
+                    });
                 }
 
-                // INICIA O FILTRO E A VISÃO GERAL
                 populateMonthFilter();
-                applyDateFilter(); // Aplica 'all' inicialmente
+                applyDateFilter(); 
 
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
         }
@@ -447,15 +461,13 @@
         }
 
         function updateRepasseChart(data) {
-            // Usa lógica do Gerente (ATUALIZADA PARA BUSCAR COLUNA ESPECÍFICA)
             const headers = data[0].map(h => h.toUpperCase().trim());
-            
-            // Tenta encontrar exatamente a coluna da imagem enviada
+            // CORREÇÃO: Busca exata pela coluna "Gerente Regional Master Franqueado"
             let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL MASTER FRANQUEADO"));
             
-            // Fallback genérico se não achar
+            // Fallbacks
             if (mgrIndex === -1) mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE"));
-            if (mgrIndex === -1) mgrIndex = 1; // Último recurso: Coluna B
+            if (mgrIndex === -1) mgrIndex = 1; 
 
             const rows = data.slice(1);
             const counts = {};
@@ -501,6 +513,7 @@
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
             chartLive.update();
 
+            // CHART LEADS TIMELINE (FILTRO APLICADO)
             const dates = {};
             leads.forEach(l => { 
                 let dStr = l.data.trim();

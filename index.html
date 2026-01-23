@@ -111,7 +111,7 @@
             <div id="btn-overview" class="nav-item active" onclick="switchTab('section-overview', 'btn-overview')">Overview Geral</div>
             <div id="btn-leads" class="nav-item" onclick="switchTab('section-leads', 'btn-leads')">Performance de Leads</div>
             
-            <div id="btn-cvc-status" class="nav-item" onclick="switchTab('section-cvc-status', 'btn-cvc-status')">Status CVC (Novo)</div>
+            <div id="btn-cvc-status" class="nav-item" onclick="switchTab('section-cvc-status', 'btn-cvc-status')">Status CVC</div>
             
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
@@ -170,11 +170,22 @@
             </div>
 
             <div id="section-cvc-status" class="dashboard-section">
-                <div class="header"><h1>Status com a CVC</h1><p>Acompanhamento da coluna de controle nova.</p></div>
+                <div class="header"><h1>Status com a CVC</h1><p>Lista de leads com status preenchido.</p></div>
                 <div class="grid">
                     <div class="card span-12">
-                        <span class="card-title" style="margin-bottom: 20px;">DISTRIBUIÇÃO DE STATUS DA NOVA COLUNA</span>
-                        <div style="height: 400px;"><canvas id="chartStatusCVC"></canvas></div>
+                         <div style="overflow-x: auto; max-height: 500px; border-radius: 8px; border: 1px solid #333;">
+                            <table id="tabela-cvc" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                                <thead style="background: var(--bg-tertiary); position: sticky; top: 0; z-index: 5;">
+                                    <tr>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">DATA</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">NOME</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">CIDADE</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">STATUS CVC</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -228,10 +239,9 @@
         let RAW_REPASSE = [];
         let RAW_REPASSE_HEADER = [];
         
-        // DADOS ESTRUTURADOS DE LIVE (SOLUÇÃO PARA O BUG)
         let STRUCT_LIVE_DATA = []; 
         
-        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, chartStatusCVC, map;
+        let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
         function showError(msg) { document.getElementById('error-display').innerHTML = `<strong>⚠️ Erro:</strong><br>${msg}`; document.getElementById('error-display').style.display = 'block'; }
 
@@ -269,7 +279,6 @@
             return result;
         }
 
-        // --- SISTEMA DE DATAS ---
         function getMonthYearFromDate(dateStr) {
             if(!dateStr) return null;
             const parts = dateStr.trim().split(' ')[0].split('/');
@@ -283,36 +292,18 @@
 
         function populateMonthFilter() {
             const months = new Set();
-            
-            // 1. Leads
-            RAW_LEADS.forEach(l => {
-                const my = getMonthYearFromDate(l.data);
-                if(my && my >= '2026-01') months.add(my);
-            });
-            
-            // 2. Repasse
-            RAW_REPASSE.forEach(r => {
-                const my = getMonthYearFromDate(r[0]); 
-                if(my && my >= '2026-01') months.add(my);
-            });
-
-            // 3. Lives
-            STRUCT_LIVE_DATA.forEach(item => {
-                const my = getMonthYearFromDate(item.date);
-                if(my && my >= '2026-01') months.add(my);
-            });
+            RAW_LEADS.forEach(l => { const my = getMonthYearFromDate(l.data); if(my && my >= '2026-01') months.add(my); });
+            RAW_REPASSE.forEach(r => { const my = getMonthYearFromDate(r[0]); if(my && my >= '2026-01') months.add(my); });
+            STRUCT_LIVE_DATA.forEach(item => { const my = getMonthYearFromDate(item.date); if(my && my >= '2026-01') months.add(my); });
 
             const sortedMonths = Array.from(months).sort().reverse(); 
-            
             const select = document.getElementById('monthFilter');
             select.innerHTML = '<option value="all">Todo o Período</option>';
-            
             sortedMonths.forEach(m => {
                 const [ano, mes] = m.split('-');
                 const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' }).toUpperCase();
                 const opt = document.createElement('option');
-                opt.value = m;
-                opt.innerText = `${nomeMes} / ${ano}`;
+                opt.value = m; opt.innerText = `${nomeMes} / ${ano}`;
                 select.appendChild(opt);
             });
         }
@@ -320,42 +311,27 @@
         function applyDateFilter() {
             const selected = document.getElementById('monthFilter').value;
             
-            // 1. Filtra Leads
             let filteredLeads = RAW_LEADS;
-            if(selected !== 'all') {
-                filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
-            }
+            if(selected !== 'all') filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
 
-            // 2. Filtra Repasse
             let filteredRepasse = RAW_REPASSE;
-            if(selected !== 'all') {
-                filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
-            }
+            if(selected !== 'all') filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
 
-            // 3. Filtra Lives
             let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
             let filteredLiveTimeline = {};
             
             STRUCT_LIVE_DATA.forEach(item => {
-                if(selected !== 'all') {
-                    if(getMonthYearFromDate(item.date) !== selected) return;
-                }
-
+                if(selected !== 'all') { if(getMonthYearFromDate(item.date) !== selected) return; }
                 const s = item.status.toLowerCase();
                 if (s === 'presente') filteredLiveStats.presente++;
                 if (s === 'ausente') filteredLiveStats.ausente++;
                 if (s === 'agendado') filteredLiveStats.agendado++;
-                
                 const matchTimeline = item.date.match(/(\d{2}\/\d{2})/);
-                if(matchTimeline) {
-                    filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
-                }
+                if(matchTimeline) filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
             });
 
-            // Atualiza Dashboard
             updateDashboard(filteredLeads, filteredLiveStats, filteredLiveTimeline);
             
-            // Atualiza Tabela e Gráfico de Repasse
             const repasseWithHeader = [RAW_REPASSE_HEADER, ...filteredRepasse];
             renderRepasseTable(repasseWithHeader);
             updateRepasseChart(repasseWithHeader);
@@ -369,37 +345,33 @@
                     fetch(REPASSE_URL).then(r => r.text())
                 ]);
 
-                // 1. Repasse
                 const rowsRepasse = parseCSV(resRepasse);
                 RAW_REPASSE_HEADER = rowsRepasse[0];
                 RAW_REPASSE = rowsRepasse.slice(1); 
 
-                // 2. Leads (AJUSTADO PARA A NOVA COLUNA)
                 const rowsLeads = parseCSV(resLeads);
                 const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
                 
                 const IDX = {
                     DATA: headers.findIndex(h => h.includes("DATA")),
-                    // Busca dinâmica pela nova coluna ou fallback para índice 2
+                    NOME: headers.findIndex(h => h.includes("NOME")),
                     STATUS_CVC: headers.findIndex(h => h.includes("STATUS COM A CVC") || h === "STATUS"),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
-                    STATUS_K: 11, // Ajustado provisoriamente (+1 casa)
+                    STATUS_K: 11, 
                     STATUS_COLS: []
                 };
 
-                // Recupera colunas de tentativa
                 headers.forEach((h, i) => { if (h.includes("TENTATIVA")) IDX.STATUS_COLS.push(i); });
                 
-                // Fallbacks se não achar o nome exato (Ajustado para o shift da coluna nova)
                 if(IDX.DATA === -1) IDX.DATA = 0;
-                if(IDX.STATUS_CVC === -1) IDX.STATUS_CVC = 2; // Coluna C é index 2
-                if(IDX.CIDADE === -1) IDX.CIDADE = 5; // Cidade foi para F (index 5)
+                if(IDX.NOME === -1) IDX.NOME = 1; // Coluna B
+                if(IDX.STATUS_CVC === -1) IDX.STATUS_CVC = 2; // Coluna C
+                if(IDX.CIDADE === -1) IDX.CIDADE = 5; 
                 if(IDX.STATUS_COLS.length === 0) IDX.STATUS_COLS = [12,13,14,15,16];
 
                 RAW_LEADS = rowsLeads.slice(1).map(cols => {
                     if(cols.length < 5 || !cols[IDX.DATA].match(/\d/)) return null;
                     
-                    // Lógica original de Status do Funil
                     let finalStatus = "SEM RESPOSTA";
                     let foundMeaningful = false;
                     for (let colIndex of IDX.STATUS_COLS) {
@@ -410,53 +382,43 @@
                         if (!foundMeaningful && !val.includes("SEM RESPOSTA")) { finalStatus = val; }
                     }
 
-                    // Tenta pegar o Status K, se falhar pega o padrão
                     let statusK = (cols[IDX.STATUS_K] || "");
-                    if(!statusK && cols.length > 10) statusK = cols[cols.length-2]; // Penultima coluna geralmente
+                    if(!statusK && cols.length > 10) statusK = cols[cols.length-2];
                     statusK = statusK.toUpperCase().trim();
                     if (statusK === "") statusK = "ATIVO"; 
                     
-                    // Pega o valor da NOVA COLUNA
-                    let statusCVCValue = (cols[IDX.STATUS_CVC] || "Não Preenchido").trim();
-                    if(statusCVCValue === "") statusCVCValue = "Vazio";
-
+                    // Pega o valor da NOVA COLUNA e limpa
+                    let statusCVCValue = (cols[IDX.STATUS_CVC] || "").trim();
+                    
+                    const rawName = (cols[IDX.NOME] || "Sem Nome").trim();
                     const rawCity = cols[IDX.CIDADE] || "";
                     
                     return { 
-                        data: cols[IDX.DATA], 
+                        data: cols[IDX.DATA],
+                        nome: rawName,
                         cidade: rawCity, 
                         status: finalStatus, 
                         statusK: statusK,
-                        statusCVC: statusCVCValue // Novo dado mapeado
+                        statusCVC: statusCVCValue 
                     };
                 }).filter(i => i !== null);
 
-                // 3. Lives
                 if(resLive) {
                     const rowsLive = parseCSV(resLive);
                     let currentLiveDate = null;
                     STRUCT_LIVE_DATA = [];
-
                     rowsLive.forEach(row => {
                         const rowString = row.join(' ');
                         if (rowString.match(/\d{2}\/\d{2}\/\d{4}/)) {
                             const match = rowString.match(/(\d{2}\/\d{2}\/\d{4})/);
-                            if(match) currentLiveDate = match[1]; 
-                            return; 
+                            if(match) currentLiveDate = match[1]; return; 
                         }
-
                         if(currentLiveDate) {
                             const statusCell = row.find(c => c && (c.toLowerCase() === 'presente' || c.toLowerCase() === 'ausente' || c.toLowerCase() === 'agendado'));
-                            if (statusCell) {
-                                STRUCT_LIVE_DATA.push({
-                                    date: currentLiveDate,
-                                    status: statusCell
-                                });
-                            }
+                            if (statusCell) STRUCT_LIVE_DATA.push({ date: currentLiveDate, status: statusCell });
                         }
                     });
                 }
-
                 populateMonthFilter();
                 applyDateFilter(); 
 
@@ -482,18 +444,13 @@
             const tr = table.getElementsByTagName("tr");
             for (let i = 0; i < tr.length; i++) {
                 let txtValue = tr[i].textContent || tr[i].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
+                if (txtValue.toUpperCase().indexOf(filter) > -1) tr[i].style.display = ""; else tr[i].style.display = "none";
             }
         }
 
         function updateRepasseChart(data) {
             const headers = data[0].map(h => h.toUpperCase().trim());
             let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL MASTER FRANQUEADO"));
-            
             if (mgrIndex === -1) mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE"));
             if (mgrIndex === -1) mgrIndex = 1; 
 
@@ -505,12 +462,31 @@
                 const name = rawName === "" ? "N/D" : rawName;
                 counts[name] = (counts[name] || 0) + 1;
             });
-
             const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10);
-            
             chartRepasseOverview.data.labels = sorted.map(i => i[0]);
             chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
             chartRepasseOverview.update();
+        }
+
+        // --- FUNÇÃO DE RENDERIZAR TABELA CVC (NOVA) ---
+        function renderStatusCVCTable(leads) {
+            const tbody = document.querySelector("#tabela-cvc tbody");
+            // Filtra removendo vazios e nulos
+            const filtered = leads.filter(l => l.statusCVC !== "" && l.statusCVC !== "Não Preenchido" && l.statusCVC !== "Vazio");
+
+            tbody.innerHTML = filtered.map(l => `
+                <tr style="border-bottom: 1px solid #222;">
+                    <td style="padding: 12px; color: var(--text-muted);">${l.data}</td>
+                    <td style="padding: 12px; color: white; font-weight:bold;">${l.nome}</td>
+                    <td style="padding: 12px; color: var(--text-muted);">${l.cidade}</td>
+                    <td style="padding: 12px;"><span class="mini-badge" style="background: #ffd700; color: #000;">${l.statusCVC}</span></td>
+                </tr>
+            `).join('');
+            
+            // Se quiser mostrar mensagem de vazio:
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="padding: 20px; text-align: center; color: #666;">Nenhum lead com status CVC preenchido encontrado neste período.</td></tr>`;
+            }
         }
 
         function updateDashboard(leads, liveStats, liveTimeline) {
@@ -541,7 +517,6 @@
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, liveStats.presente];
             chartLive.update();
 
-            // CHART LEADS TIMELINE
             const dates = {};
             leads.forEach(l => { 
                 let dStr = l.data.trim();
@@ -551,37 +526,21 @@
                     dates[displayKey] = (dates[displayKey]||0) + 1;
                 }
             });
-
             const labels = Object.keys(dates).sort((a, b) => {
-                const [d1, m1] = a.split('/');
-                const [d2, m2] = b.split('/');
+                const [d1, m1] = a.split('/'); const [d2, m2] = b.split('/');
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
             });
-
             chartLeadsTimeline.data.labels = labels;
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
-            // --- NOVO GRÁFICO STATUS CVC ---
-            const statusCVCCounts = {};
-            leads.forEach(l => {
-                const s = l.statusCVC;
-                statusCVCCounts[s] = (statusCVCCounts[s] || 0) + 1;
-            });
-            // Ordena do maior para o menor
-            const sortedCVC = Object.entries(statusCVCCounts).sort((a,b) => b[1] - a[1]);
-            
-            chartStatusCVC.data.labels = sortedCVC.map(i => i[0]);
-            chartStatusCVC.data.datasets[0].data = sortedCVC.map(i => i[1]);
-            chartStatusCVC.update();
-            // --------------------------------
+            // --- ATUALIZA A TABELA NOVA ---
+            renderStatusCVCTable(leads);
 
             const liveLabels = Object.keys(liveTimeline).sort((a, b) => {
-                const [d1, m1] = a.split('/');
-                const [d2, m2] = b.split('/');
+                const [d1, m1] = a.split('/'); const [d2, m2] = b.split('/');
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
             });
-            
             chartLivesTimeline.data.labels = liveLabels;
             chartLivesTimeline.data.datasets[0].data = liveLabels.map(d => liveTimeline[d] || 0);
             chartLivesTimeline.update();
@@ -591,10 +550,7 @@
                 for(const [cidade, qtd] of Object.entries(cityCount)) {
                     const clean = cidade.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                     const coords = COORDENADAS[clean];
-                    if(coords) {
-                        L.marker(coords, { icon: L.divIcon({ className: 'custom-pin', iconSize:[14,14] }) })
-                          .addTo(map).bindPopup(`<b>${cidade}</b><br>${qtd} Leads`);
-                    }
+                    if(coords) L.marker(coords, { icon: L.divIcon({ className: 'custom-pin', iconSize:[14,14] }) }).addTo(map).bindPopup(`<b>${cidade}</b><br>${qtd} Leads`);
                 }
             }
         }
@@ -624,21 +580,6 @@
                 type: 'bar',
                 data: { labels: [], datasets: [{ label: 'Volume de Repasses', data: [], backgroundColor: '#ff1f2d', borderRadius: 5, barThickness: 30 }] },
                 options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } } }
-            });
-
-            // --- NOVO CHART PARA STATUS CVC ---
-            chartStatusCVC = new Chart(document.getElementById('chartStatusCVC'), {
-                type: 'bar',
-                indexAxis: 'y', // Barra horizontal para ler melhor os status
-                data: { labels: [], datasets: [{ label: 'Qtd. Leads', data: [], backgroundColor: '#ffd700', borderRadius: 5, barThickness: 20 }] },
-                options: { 
-                    maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } }, 
-                    scales: { 
-                        x: { beginAtZero: true, grid: { color: '#222' } }, 
-                        y: { grid: { display: false }, ticks: { color: '#fff' } } 
-                    } 
-                }
             });
         }
 

@@ -157,35 +157,9 @@
                     <div class="card span-8"><span class="card-title" style="margin-bottom: 20px;">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
 
                     <div class="card span-12">
-                        <span class="card-title" style="margin-bottom: 20px;">TOP GERENTES (Por Volume de Repasse)</span>
-                        <div style="height: 300px;"><canvas id="chartRepasseOverview"></canvas></div>
-                        
-                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Selecione o Master</label>
-                                <select id="master-select" class="login-input" style="margin-bottom: 0; width: 250px; padding: 10px;" onchange="calcularMetaMaster()">
-                                    <option value="">Selecione...</option>
-                                </select>
-                            </div>
-                            
-                            <div style="background: var(--bg-tertiary); padding: 10px 20px; border-radius: 12px; border: 1px solid #333; display: flex; align-items: center; gap: 15px;">
-                                <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Leads Entraram (Acomp.)</span>
-                                    <strong id="master-leads-count" style="font-size: 1.2rem; color: white;">0</strong>
-                                </div>
-                                <div style="width: 1px; height: 30px; background: #444;"></div>
-                                <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Já na Planilha de Repasse</span>
-                                    <strong id="master-repasse-count" style="font-size: 1.2rem; color: var(--cvc-neon-yellow);">0</strong>
-                                </div>
-                                <div style="width: 1px; height: 30px; background: #444;"></div>
-                                <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam Repassar</span>
-                                    <strong id="master-leads-faltam" style="font-size: 1.2rem; color: var(--v4-neon-red);">0</strong>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
+                        <span class="card-title" style="margin-bottom: 20px;">COMPARATIVO: LEADS (ACOMPANHAMENTO) X JÁ REPASSADOS</span>
+                        <div style="height: 350px;"><canvas id="chartRepasseOverview"></canvas></div>
+                    </div>
                 </div>
             </div>
             
@@ -277,7 +251,6 @@
         
         let STRUCT_LIVE_DATA = []; 
         let CURRENT_FILTERED_LEADS = []; // Guarda os leads filtrados
-        window.masterRepasseCounts = {}; // Guarda a contagem global de repasses por master
         
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
@@ -389,9 +362,6 @@
             const repasseWithHeader = [RAW_REPASSE_HEADER, ...filteredRepasse];
             renderRepasseTable(repasseWithHeader);
             updateRepasseChart(repasseWithHeader);
-            
-            // Recalcula o saldo ao mudar a data
-            calcularMetaMaster();
         }
 
         async function fetchData() {
@@ -521,52 +491,18 @@
             }
         }
 
-        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE ---
-        function calcularMetaMaster() {
-            const masterSelect = document.getElementById('master-select');
-            const masterName = masterSelect.value;
-            
-            let leadsCount = 0;
-            let repasseCount = 0;
-            
-            // 1. Conta os leads na aba de Acompanhamento (Leads que Entraram)
-            if (masterName && window.CURRENT_FILTERED_LEADS) {
-                leadsCount = window.CURRENT_FILTERED_LEADS.filter(l => l.master === masterName).length;
-            }
-            
-            // 2. Conta os leads já repassados (da Planilha Repasse)
-            if (masterName && window.masterRepasseCounts) {
-                repasseCount = window.masterRepasseCounts[masterName] || 0;
-            }
-            
-            // Atualiza os painéis
-            document.getElementById('master-leads-count').innerText = leadsCount;
-            document.getElementById('master-repasse-count').innerText = repasseCount;
-            
-            const faltam = leadsCount - repasseCount;
-            const labelFaltam = document.getElementById('master-leads-faltam');
-            
-            if (faltam > 0) {
-                labelFaltam.innerText = faltam;
-                labelFaltam.style.color = 'var(--v4-neon-red)';
-            } else if (faltam < 0) {
-                 // Significa que tem mais no repasse do que na tabela original
-                labelFaltam.innerText = "0 (Sobra: " + Math.abs(faltam) + ")";
-                labelFaltam.style.color = 'var(--status-green)';
-            } else {
-                labelFaltam.innerText = "0";
-                labelFaltam.style.color = 'var(--status-green)';
-            }
-        }
-
         function updateRepasseChart(data) {
             const rows = data.slice(1); // Tira o cabeçalho
             
-            // Inicia o contador apenas para a lista permitida
-            const counts = {};
-            ALLOWED_MASTERS.forEach(m => counts[m] = 0);
+            // Inicia os contadores de Repasse e Leads apenas para a lista permitida
+            const repasseCounts = {};
+            const leadsCounts = {};
+            ALLOWED_MASTERS.forEach(m => {
+                repasseCounts[m] = 0;
+                leadsCounts[m] = 0;
+            });
 
-            // Busca inteligente varrendo todas as colunas da Planilha Repasse
+            // 1. Busca inteligente varrendo todas as colunas da Planilha Repasse
             rows.forEach(r => {
                 for(let cell of r) {
                     if(!cell) continue;
@@ -575,43 +511,31 @@
                     // Tenta achar um match exato da nossa lista
                     let matchedMaster = ALLOWED_MASTERS.find(m => upperCell.includes(normalizeString(m)));
                     if (matchedMaster) {
-                        counts[matchedMaster]++;
+                        repasseCounts[matchedMaster]++;
                         break; // Achou o master nessa linha, não precisa procurar mais
                     }
                 }
             });
 
-            // Guarda para a calculadora de metas
-            window.masterRepasseCounts = counts;
-
-            // Filtra o array para o gráfico (ignora quem tem 0 repasses e ordena do maior pro menor)
-            const sorted = Object.entries(counts)
-                .filter(i => i[1] > 0) 
-                .sort((a,b) => b[1] - a[1])
-                .slice(0, 10);
-
-            chartRepasseOverview.data.labels = sorted.map(i => i[0]);
-            chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
-            chartRepasseOverview.update();
-
-            // Popula o select exclusivamente com os Masters
-            const masterSelect = document.getElementById('master-select');
-            const currentVal = masterSelect.value;
-            masterSelect.innerHTML = '<option value="">Selecione...</option>';
-            
-            ALLOWED_MASTERS.sort().forEach(name => {
-                const opt = document.createElement('option');
-                opt.value = name;
-                opt.innerText = name;
-                masterSelect.appendChild(opt);
-            });
-            
-            if (ALLOWED_MASTERS.includes(currentVal)) {
-                masterSelect.value = currentVal;
+            // 2. Conta quantos Leads Entraram (Acompanhamento) para cada Master
+            if (window.CURRENT_FILTERED_LEADS) {
+                window.CURRENT_FILTERED_LEADS.forEach(l => {
+                    if(l.master && ALLOWED_MASTERS.includes(l.master)) {
+                        leadsCounts[l.master]++;
+                    }
+                });
             }
-            
-            // Recalcula as metas logo depois de gerar a lista
-            calcularMetaMaster();
+
+            // Filtra e ordena (mostra quem tem atividade em pelo menos uma das listas)
+            const sortedMasters = ALLOWED_MASTERS
+                .filter(m => repasseCounts[m] > 0 || leadsCounts[m] > 0)
+                .sort((a,b) => (repasseCounts[b] + leadsCounts[b]) - (repasseCounts[a] + leadsCounts[a])); // Ordena pelo maior volume somado
+
+            // Atualiza os dados no gráfico de duas barras
+            chartRepasseOverview.data.labels = sortedMasters;
+            chartRepasseOverview.data.datasets[0].data = sortedMasters.map(m => leadsCounts[m]); // Barra Amarela
+            chartRepasseOverview.data.datasets[1].data = sortedMasters.map(m => repasseCounts[m]); // Barra Vermelha
+            chartRepasseOverview.update();
         }
 
         function renderStatusCVCTable(leads) {
@@ -749,10 +673,30 @@
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
         
+            // ATUALIZAÇÃO: Gráfico Duplo (Grouped Bar Chart)
             chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
                 type: 'bar',
-                data: { labels: [], datasets: [{ label: 'Volume de Repasses', data: [], backgroundColor: '#ff1f2d', borderRadius: 5, barThickness: 30 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#222' } }, x: { grid: { display: false } } } }
+                data: { 
+                    labels: [], 
+                    datasets: [
+                        { label: 'Leads Entraram (Acomp.)', data: [], backgroundColor: '#ffd700', borderRadius: 4 },
+                        { label: 'Já na Planilha de Repasse', data: [], backgroundColor: '#ff1f2d', borderRadius: 4 }
+                    ] 
+                },
+                options: { 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            display: true, 
+                            position: 'top', 
+                            labels: { color: '#8c8c8c', usePointStyle: true, boxWidth: 10 } 
+                        } 
+                    }, 
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: '#222' } }, 
+                        x: { grid: { display: false } } 
+                    } 
+                }
             });
         }
 

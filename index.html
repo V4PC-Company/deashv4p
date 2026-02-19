@@ -260,6 +260,14 @@
 
         const COORDENADAS = { "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333], "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729], "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345], "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016], "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733], "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770], "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648], "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902], "guarulhos": [-23.4515, -46.5333], "campinas": [-22.9099, -47.0626], "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068], "sao goncalo": [-22.8275, -43.0631], "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351], "duque de caxias": [-22.7923, -43.3108], "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110], "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034], "sao bernardo do campo": [-23.6914, -46.5646], "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450], "nova iguacu": [-22.7561, -43.4607], "santo andre": [-23.6638, -46.5383], "osasco": [-23.5336, -46.7920], "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009], "jaboatao dos guararapes": [-8.1782, -35.0354], "ribeirao preto": [-21.1704, -47.8103], "uberlandia": [-18.9113, -48.2622], "contagem": [-19.9326, -44.0538], "sorocaba": [-23.5015, -47.4521], "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979], "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128], "juiz de fora": [-21.7661, -43.3503], "londrina": [-23.3045, -51.1696], "niteroi": [-22.8808, -43.1043], "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480], "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222] };
 
+        // LISTA ESTRITA DE MASTERS PERMITIDOS
+        const ALLOWED_MASTERS = [
+            "ALESSANDRO CANALI", "CLAUDIO VILA NOVA", "CVC CAMPINAS", "CVC CE", 
+            "CVC INTERIOR", "CVC MATRIZ", "DIRAN GUTIERREZ", "HELIO AUGUSTO SILVA JUNIOR", 
+            "JOSE CARLOS QUILICI", "KLENIO REGO", "LARA BOSNICH", "LUIZ WALTER", 
+            "MARCIO BARRETO", "MARIO GUASPARI", "THIAGO QUILICI", "WAGNER MOREIRA"
+        ];
+
         // Variáveis Globais
         let RAW_LEADS = [];
         let RAW_REPASSE = [];
@@ -502,8 +510,8 @@
             if (masterName && masterName !== "N/D" && window.CURRENT_FILTERED_LEADS) {
                 count = window.CURRENT_FILTERED_LEADS.filter(l => {
                     if (!l.master) return false;
-                    // Faz a verificação para ver se o nome bate (mesmo se parcial)
-                    return l.master === masterName || l.master.includes(masterName) || masterName.includes(l.master);
+                    // Faz a verificação estrita para garantir correspondência com a lista
+                    return l.master.includes(masterName) || masterName.includes(l.master);
                 }).length;
             }
             
@@ -531,29 +539,46 @@
             if (mgrIndex === -1) mgrIndex = 1; 
 
             const rows = data.slice(1);
+            
+            // Inicializa a contagem APENAS com os Masters permitidos
             const counts = {};
+            ALLOWED_MASTERS.forEach(m => counts[m] = 0);
+
             rows.forEach(r => {
                 if(!r[0]) return;
-                const rawName = r[mgrIndex] ? r[mgrIndex].trim() : "N/D";
-                const name = rawName === "" ? "N/D" : rawName;
-                counts[name] = (counts[name] || 0) + 1; // Contagem só pro gráfico
+                const rawName = r[mgrIndex] ? r[mgrIndex].toUpperCase().trim() : "";
+                
+                // Tenta encontrar o nome do Master na nossa lista "limpa" e segura
+                const matchedMaster = ALLOWED_MASTERS.find(m => rawName.includes(m) || m.includes(rawName));
+                if (matchedMaster && rawName !== "") {
+                    counts[matchedMaster]++;
+                }
             });
-            const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0, 10);
+
+            // Filtra e ordena para mostrar no gráfico (apenas os que tiverem contagem maior que 0)
+            const sorted = Object.entries(counts)
+                .filter(i => i[1] > 0) 
+                .sort((a,b) => b[1] - a[1])
+                .slice(0, 10);
+
             chartRepasseOverview.data.labels = sorted.map(i => i[0]);
             chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
             chartRepasseOverview.update();
 
-            // POPULA O SELECT COM OS MASTERS QUE ESTÃO NA LISTA DE REPASSE
+            // POPULA O SELECT EXCLUSIVAMENTE COM OS MASTERS PERMITIDOS
             const masterSelect = document.getElementById('master-select');
             const currentVal = masterSelect.value;
             masterSelect.innerHTML = '<option value="">Selecione...</option>';
-            Object.keys(counts).sort().forEach(name => {
+            
+            ALLOWED_MASTERS.sort().forEach(name => {
                 const opt = document.createElement('option');
                 opt.value = name;
                 opt.innerText = name;
                 masterSelect.appendChild(opt);
             });
-            if (Object.keys(counts).includes(currentVal)) {
+            
+            // Mantém a seleção se for válida
+            if (ALLOWED_MASTERS.includes(currentVal)) {
                 masterSelect.value = currentVal;
             }
             

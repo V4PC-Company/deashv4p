@@ -359,10 +359,19 @@
                 opt.value = m; opt.innerText = `${nomeMes} / ${ano}`;
                 select.appendChild(opt);
             });
+            
+            // Abre por padrão no mês mais recente
+            if (sortedMonths.length > 0) {
+                select.value = sortedMonths[0];
+            }
         }
 
         function applyDateFilter() {
-            const selected = document.getElementById('monthFilter').value;
+            const select = document.getElementById('monthFilter');
+            const selected = select.value;
+            const text = select.options[select.selectedIndex].text;
+            
+            document.getElementById('header-date').innerHTML = `Analisando dados de: <strong style="color: var(--v4-neon-red);">${text}</strong>`;
             
             let filteredLeads = RAW_LEADS;
             if(selected !== 'all') filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
@@ -494,8 +503,7 @@
                         }
                     });
                 }
-                populateMonthFilter();
-                applyDateFilter(); 
+                populateMonthFilter(); // Ele já chama o applyDateFilter no final
 
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
         }
@@ -772,7 +780,6 @@
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
         
-            // ATUALIZAÇÃO: Gráfico Duplo (Grouped Bar Chart)
             chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
                 type: 'bar',
                 data: { 

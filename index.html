@@ -115,6 +115,8 @@
             
             <div id="btn-cvc-status" class="nav-item" onclick="switchTab('section-cvc-status', 'btn-cvc-status')">Status CVC</div>
             
+            <div id="btn-bant4" class="nav-item" onclick="switchTab('section-bant4', 'btn-bant4')">Base BANT4</div>
+            
             <div id="btn-geo" class="nav-item" onclick="switchTab('section-geo', 'btn-geo')">Expansão Geográfica</div>
             <div id="btn-lives" class="nav-item" onclick="switchTab('section-lives', 'btn-lives')">Relatório de Lives</div>
             <div id="btn-repasse" class="nav-item" onclick="switchTab('section-repasse', 'btn-repasse')">Lista de Repasse</div>
@@ -180,11 +182,6 @@
                                 </div>
                                 <div style="width: 1px; height: 30px; background: #444;"></div>
                                 <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam Repassar</span>
-                                    <strong id="master-leads-faltam" style="font-size: 1.2rem; color: var(--v4-neon-red);">0</strong>
-                                </div>
-                                <div style="width: 1px; height: 30px; background: #444;"></div>
-                                <div>
                                     <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">BANT4 (Qualificados)</span>
                                     <strong id="master-bant4-count" style="font-size: 1.2rem; color: var(--status-green);">0</strong>
                                 </div>
@@ -214,6 +211,36 @@
                                         <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">NOME</th>
                                         <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">CIDADE</th>
                                         <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">STATUS CVC</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="section-bant4" class="dashboard-section">
+                <div class="header">
+                    <h1>Base BANT4 (Qualificados)</h1>
+                    <p>Lista detalhada de leads com status BANT4/Qualificado no período.</p>
+                </div>
+                <div class="grid">
+                    <div class="card span-12">
+                        <div style="margin-bottom: 20px; display: flex; gap: 15px; align-items: center;">
+                            <input type="text" id="filtroBant4" class="login-input" style="margin-bottom: 0; width: 300px;" placeholder="🔍 Filtrar na lista (ex: nome, master...)" onkeyup="filtrarTabelaBant4()">
+                            <span id="total-bant4-list" class="mini-badge" style="background: var(--bg-tertiary); color: var(--status-green);">Carregando...</span>
+                        </div>
+                        <div style="overflow-x: auto; max-height: 500px; border-radius: 8px; border: 1px solid #333;">
+                            <table id="tabela-bant4" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                                <thead style="background: var(--bg-tertiary); position: sticky; top: 0; z-index: 5;">
+                                    <tr>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">DATA</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">NOME</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">CIDADE</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">MASTER</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">STATUS CVC</th>
+                                        <th style="padding: 12px; border-bottom: 2px solid #333; color: white;">STATUS FUNIL</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -381,6 +408,7 @@
             if(!isAllPeriod) filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
 
             let filteredRepasse = RAW_REPASSE;
+            // Se a planilha de repasse tiver datas na coluna 0, filtra também
             if(!isAllPeriod && RAW_REPASSE.length > 0 && RAW_REPASSE[0][0] && RAW_REPASSE[0][0].includes('/')) {
                 filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
             }
@@ -546,7 +574,7 @@
             }
         }
 
-        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE E BANT4 ---
+        // --- CÁLCULO DE BANT4 NO PAINEL METAS ---
         function calcularMetaMaster() {
             const masterSelect = document.getElementById('master-select');
             const masterName = masterSelect.value;
@@ -571,21 +599,6 @@
             document.getElementById('master-leads-count').innerText = leadsCount;
             document.getElementById('master-repasse-count').innerText = repasseCount;
             document.getElementById('master-bant4-count').innerText = bant4Count;
-            
-            const faltam = leadsCount - repasseCount;
-            const labelFaltam = document.getElementById('master-leads-faltam');
-            
-            if (faltam > 0) {
-                labelFaltam.innerText = faltam;
-                labelFaltam.style.color = 'var(--v4-neon-red)';
-            } else if (faltam < 0) {
-                 // Significa que tem mais no repasse do que na tabela original
-                labelFaltam.innerText = "0 (Sobra: " + Math.abs(faltam) + ")";
-                labelFaltam.style.color = 'var(--text-muted)';
-            } else {
-                labelFaltam.innerText = "0";
-                labelFaltam.style.color = 'var(--text-muted)';
-            }
         }
 
         function updateRepasseChart(data) {
@@ -675,6 +688,40 @@
             }
         }
 
+        // --- RENDERIZA ABA BANT4 ---
+        function renderBant4Table(leads) {
+            const tbody = document.querySelector("#tabela-bant4 tbody");
+            const filtered = leads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO'));
+
+            tbody.innerHTML = filtered.map(l => `
+                <tr style="border-bottom: 1px solid #222;">
+                    <td style="padding: 12px; color: var(--text-muted);">${l.data}</td>
+                    <td style="padding: 12px; color: white; font-weight:bold;">${l.nome}</td>
+                    <td style="padding: 12px; color: var(--text-muted);">${l.cidade}</td>
+                    <td style="padding: 12px; color: var(--cvc-neon-yellow);">${l.master || '-'}</td>
+                    <td style="padding: 12px; color: var(--text-muted);">${l.statusCVC || '-'}</td>
+                    <td style="padding: 12px;"><span class="mini-badge" style="background: var(--status-green); color: #fff;">${l.status}</span></td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('total-bant4-list').innerText = `${filtered.length} Leads Qualificados`;
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="padding: 20px; text-align: center; color: #666;">Nenhum lead qualificado (BANT4) encontrado neste período.</td></tr>`;
+            }
+        }
+
+        function filtrarTabelaBant4() {
+            const input = document.getElementById("filtroBant4");
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById("tabela-bant4");
+            const tr = table.getElementsByTagName("tr");
+            for (let i = 0; i < tr.length; i++) {
+                let txtValue = tr[i].textContent || tr[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) tr[i].style.display = ""; else tr[i].style.display = "none";
+            }
+        }
+
         function updateDashboard(leads, liveStats, liveTimeline) {
             const isAllPeriod = document.getElementById('monthFilter').value === 'all';
             
@@ -731,7 +778,11 @@
             chartLeadsTimeline.data.datasets[0].data = labels.map(d=>dates[d]);
             chartLeadsTimeline.update();
 
+            // Atualiza a tabela de CVC
             renderStatusCVCTable(leads);
+
+            // Atualiza a nova tabela de BANT4
+            renderBant4Table(leads);
 
             // Gráfico de Linha Lives
             const liveLabels = Object.keys(liveTimeline).sort((a, b) => {
@@ -800,7 +851,7 @@
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
         
-            // ATUALIZAÇÃO: Gráfico Duplo (Grouped Bar Chart)
+            // Gráfico Duplo (Grouped Bar Chart)
             chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
                 type: 'bar',
                 data: { 

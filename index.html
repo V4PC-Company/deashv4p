@@ -183,6 +183,11 @@
                                     <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam Repassar</span>
                                     <strong id="master-leads-faltam" style="font-size: 1.2rem; color: var(--v4-neon-red);">0</strong>
                                 </div>
+                                <div style="width: 1px; height: 30px; background: #444;"></div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">BANT4 (Qualificados)</span>
+                                    <strong id="master-bant4-count" style="font-size: 1.2rem; color: var(--status-green);">0</strong>
+                                </div>
                             </div>
                         </div>
                         </div>
@@ -521,17 +526,20 @@
             }
         }
 
-        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE ---
+        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE E BANT4 ---
         function calcularMetaMaster() {
             const masterSelect = document.getElementById('master-select');
             const masterName = masterSelect.value;
             
             let leadsCount = 0;
             let repasseCount = 0;
+            let bant4Count = 0;
             
-            // 1. Conta os leads na aba de Acompanhamento (Leads que Entraram)
+            // 1. Conta os leads na aba de Acompanhamento e os BANT4
             if (masterName && window.CURRENT_FILTERED_LEADS) {
-                leadsCount = window.CURRENT_FILTERED_LEADS.filter(l => l.master === masterName).length;
+                const masterLeads = window.CURRENT_FILTERED_LEADS.filter(l => l.master === masterName);
+                leadsCount = masterLeads.length;
+                bant4Count = masterLeads.filter(l => l.status.includes('BANT') || l.status.includes('QUALIFICADO')).length;
             }
             
             // 2. Conta os leads já repassados (da Planilha Repasse)
@@ -542,6 +550,7 @@
             // Atualiza os painéis
             document.getElementById('master-leads-count').innerText = leadsCount;
             document.getElementById('master-repasse-count').innerText = repasseCount;
+            document.getElementById('master-bant4-count').innerText = bant4Count;
             
             const faltam = leadsCount - repasseCount;
             const labelFaltam = document.getElementById('master-leads-faltam');
@@ -552,10 +561,10 @@
             } else if (faltam < 0) {
                  // Significa que tem mais no repasse do que na tabela original
                 labelFaltam.innerText = "0 (Sobra: " + Math.abs(faltam) + ")";
-                labelFaltam.style.color = 'var(--status-green)';
+                labelFaltam.style.color = 'var(--text-muted)';
             } else {
                 labelFaltam.innerText = "0";
-                labelFaltam.style.color = 'var(--status-green)';
+                labelFaltam.style.color = 'var(--text-muted)';
             }
         }
 
@@ -604,6 +613,28 @@
             chartRepasseOverview.data.datasets[0].data = sortedMasters.map(m => leadsCounts[m]); // Barra Amarela
             chartRepasseOverview.data.datasets[1].data = sortedMasters.map(m => repasseCounts[m]); // Barra Vermelha
             chartRepasseOverview.update();
+
+            // Guarda as contagens de repasse no objeto global
+            window.masterRepasseCounts = repasseCounts;
+
+            // Popula o Select com todos os masters permitidos
+            const masterSelect = document.getElementById('master-select');
+            const currentVal = masterSelect.value;
+            masterSelect.innerHTML = '<option value="">Selecione...</option>';
+            
+            ALLOWED_MASTERS.sort().forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.innerText = name;
+                masterSelect.appendChild(opt);
+            });
+            
+            if (ALLOWED_MASTERS.includes(currentVal)) {
+                masterSelect.value = currentVal;
+            }
+            
+            // Recalcula o painelzinho
+            calcularMetaMaster();
         }
 
         function renderStatusCVCTable(leads) {

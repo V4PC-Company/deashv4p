@@ -132,11 +132,11 @@
                 <div class="header">
                     <div class="header-content">
                         <h1>Visão Geral de Expansão</h1>
-                        <p id="header-date">Selecione o período para análise</p>
+                        <p id="header-date">Carregando dados...</p>
                     </div>
                     <select id="monthFilter" class="month-select" onchange="applyDateFilter()">
                         <option value="all">Todo o Período</option>
-                        </select>
+                    </select>
                 </div>
 
                 <div class="grid">
@@ -195,7 +195,7 @@
             </div>
             
             <div id="section-leads" class="dashboard-section">
-                <div class="header"><h1>Performance de Leads</h1><p>Evolução diária (Filtro Aplicado).</p></div>
+                <div class="header"><h1>Performance de Leads</h1><p>Evolução de acordo com o filtro aplicado.</p></div>
                 <div class="grid"><div class="card span-12">
                     <span id="leads-title" class="card-title" style="margin-bottom: 20px;">VOLUME DIÁRIO DE LEADS</span>
                     <div style="height: 400px;"><canvas id="chartLeadsTimeline"></canvas></div>
@@ -229,8 +229,8 @@
             </div>
             
             <div id="section-lives" class="dashboard-section">
-                <div class="header"><h1>Relatório de Lives</h1><p>Cadastros para a Live.</p></div>
-                <div class="grid"><div class="card span-12"><span class="card-title" style="margin-bottom: 20px;">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
+                <div class="header"><h1>Relatório de Lives</h1><p>Evolução de Cadastros de acordo com o filtro aplicado.</p></div>
+                <div class="grid"><div class="card span-12"><span id="lives-title" class="card-title" style="margin-bottom: 20px;">EVOLUÇÃO DE CADASTROS (LIVE)</span><div style="height: 400px;"><canvas id="chartLivesTimeline"></canvas></div></div></div>
             </div>
 
             <div id="section-repasse" class="dashboard-section">
@@ -342,7 +342,7 @@
             const months = new Set();
             RAW_LEADS.forEach(l => { const my = getMonthYearFromDate(l.data); if(my && my >= '2026-01') months.add(my); });
             
-            // Opcional: puxar data do repasse também (se a planilha tiver coluna de data na pos 0)
+            // Puxa data do repasse também
             if(RAW_REPASSE.length > 0 && RAW_REPASSE[0][0]) {
                 RAW_REPASSE.forEach(r => { const my = getMonthYearFromDate(r[0]); if(my && my >= '2026-01') months.add(my); });
             }
@@ -360,25 +360,28 @@
                 select.appendChild(opt);
             });
             
-            // Abre por padrão no mês mais recente
+            // Abre por padrão no mês mais recente para melhor visualização inicial
             if (sortedMonths.length > 0) {
                 select.value = sortedMonths[0];
+            } else {
+                select.value = 'all';
             }
         }
 
         function applyDateFilter() {
             const select = document.getElementById('monthFilter');
             const selected = select.value;
-            const text = select.options[select.selectedIndex].text;
+            const text = select.options[select.selectedIndex] ? select.options[select.selectedIndex].text : "Todo o Período";
             
             document.getElementById('header-date').innerHTML = `Analisando dados de: <strong style="color: var(--v4-neon-red);">${text}</strong>`;
             
+            const isAllPeriod = (selected === 'all');
+
             let filteredLeads = RAW_LEADS;
-            if(selected !== 'all') filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
+            if(!isAllPeriod) filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
 
             let filteredRepasse = RAW_REPASSE;
-            // Se a planilha de repasse tiver datas na coluna 0, filtra também
-            if(selected !== 'all' && RAW_REPASSE.length > 0 && RAW_REPASSE[0][0] && RAW_REPASSE[0][0].includes('/')) {
+            if(!isAllPeriod && RAW_REPASSE.length > 0 && RAW_REPASSE[0][0] && RAW_REPASSE[0][0].includes('/')) {
                 filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
             }
 
@@ -386,13 +389,20 @@
             let filteredLiveTimeline = {};
             
             STRUCT_LIVE_DATA.forEach(item => {
-                if(selected !== 'all') { if(getMonthYearFromDate(item.date) !== selected) return; }
+                if(!isAllPeriod) { 
+                    if(getMonthYearFromDate(item.date) !== selected) return; 
+                }
                 const s = item.status.toLowerCase();
                 if (s === 'presente') filteredLiveStats.presente++;
                 if (s === 'ausente') filteredLiveStats.ausente++;
                 if (s === 'agendado') filteredLiveStats.agendado++;
-                const matchTimeline = item.date.match(/(\d{2}\/\d{2})/);
-                if(matchTimeline) filteredLiveTimeline[matchTimeline[1]] = (filteredLiveTimeline[matchTimeline[1]] || 0) + 1;
+                
+                // Agrupamento Inteligente do Gráfico (Meses vs Dias)
+                const parts = item.date.split('/');
+                if(parts.length >= 3) {
+                    const displayKey = isAllPeriod ? `${parts[1]}/${parts[2]}` : `${parts[0]}/${parts[1]}`; // MM/YYYY se for 'all', senao DD/MM
+                    filteredLiveTimeline[displayKey] = (filteredLiveTimeline[displayKey] || 0) + 1;
+                }
             });
 
             // Guarda globalmente os leads do período selecionado
@@ -417,7 +427,6 @@
                 ]);
 
                 const rowsRepasse = parseCSV(resRepasse);
-                // Evita problemas de repasse sem cabeçalho 
                 if(rowsRepasse.length > 0) {
                      RAW_REPASSE_HEADER = rowsRepasse[0];
                      RAW_REPASSE = rowsRepasse.slice(1); 
@@ -503,7 +512,10 @@
                         }
                     });
                 }
-                populateMonthFilter(); // Ele já chama o applyDateFilter no final
+                
+                // Inicia o processo de carga dos filtros visuais que, por sua vez, aciona a dashboard
+                populateMonthFilter();
+                applyDateFilter(); 
 
             } catch(e) { console.error(e); showError("Erro ao carregar dados."); }
         }
@@ -664,6 +676,12 @@
         }
 
         function updateDashboard(leads, liveStats, liveTimeline) {
+            const isAllPeriod = document.getElementById('monthFilter').value === 'all';
+            
+            // Atualiza os Títulos Dinamicamente
+            document.getElementById('leads-title').innerText = isAllPeriod ? "VOLUME MENSAL DE LEADS" : "VOLUME DIÁRIO DE LEADS";
+            document.getElementById('lives-title').innerText = isAllPeriod ? "EVOLUÇÃO MENSAL DE CADASTROS (LIVE)" : "EVOLUÇÃO DIÁRIA DE CADASTROS (LIVE)";
+
             const k_ativos = leads.filter(l => l.statusK === "ATIVO").length; 
             const k_qualificados = leads.filter(l => l.statusK.includes("QUALIFICADO")).length;
             const k_inativos = leads.filter(l => l.statusK.includes("INATIVO") || l.statusK.includes("DESATIVAR")).length;
@@ -695,12 +713,13 @@
             chartLive.data.datasets[0].data = [semResp, contatado, bant4_total, k_congelado, k_nutricao, liveStats.presente];
             chartLive.update();
 
+            // Gráfico de Linha Leads - Agrupamento Inteligente
             const dates = {};
             leads.forEach(l => { 
                 let dStr = l.data.trim();
                 const parts = dStr.split(' ')[0].split('/'); 
-                if(parts.length >= 2) {
-                    const displayKey = `${parts[0]}/${parts[1]}`;
+                if(parts.length >= 3) {
+                    const displayKey = isAllPeriod ? `${parts[1]}/${parts[2]}` : `${parts[0]}/${parts[1]}`;
                     dates[displayKey] = (dates[displayKey]||0) + 1;
                 }
             });
@@ -714,6 +733,7 @@
 
             renderStatusCVCTable(leads);
 
+            // Gráfico de Linha Lives
             const liveLabels = Object.keys(liveTimeline).sort((a, b) => {
                 const [d1, m1] = a.split('/'); const [d2, m2] = b.split('/');
                 return (parseInt(m1)*100 + parseInt(d1)) - (parseInt(m2)*100 + parseInt(d2));
@@ -780,6 +800,7 @@
             chartLeadsTimeline = new Chart(document.getElementById('chartLeadsTimeline'), { type: 'line', data: { datasets: [{ label: 'Novos Leads', data: [], borderColor: '#ff1f2d', backgroundColor: 'rgba(255, 31, 45, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
             chartLivesTimeline = new Chart(document.getElementById('chartLivesTimeline'), { type: 'line', data: { datasets: [{ label: 'Cadastros Live', data: [], borderColor: '#ffd700', backgroundColor: 'rgba(255, 215, 0, 0.1)', fill: true, tension: 0.4 }] }, options: commonLineOptions });
         
+            // ATUALIZAÇÃO: Gráfico Duplo (Grouped Bar Chart)
             chartRepasseOverview = new Chart(document.getElementById('chartRepasseOverview'), {
                 type: 'bar',
                 data: { 

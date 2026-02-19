@@ -157,9 +157,35 @@
                     <div class="card span-8"><span class="card-title" style="margin-bottom: 20px;">STATUS DO FUNIL (Detalhado)</span><div style="height: 200px;"><canvas id="chartLive"></canvas></div></div>
 
                     <div class="card span-12">
-                        <span class="card-title" style="margin-bottom: 20px;">COMPARATIVO: LEADS Entrantes X Volume de Repasse</span>
+                        <span class="card-title" style="margin-bottom: 20px;">COMPARATIVO: LEADS ENTRANTES X VOLUME DE REPASSE</span>
                         <div style="height: 350px;"><canvas id="chartRepasseOverview"></canvas></div>
-                    </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #333; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap;">
+                            <div>
+                                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Selecione o Master</label>
+                                <select id="master-select" class="login-input" style="margin-bottom: 0; width: 250px; padding: 10px;" onchange="calcularMetaMaster()">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                            
+                            <div style="background: var(--bg-tertiary); padding: 10px 20px; border-radius: 12px; border: 1px solid #333; display: flex; align-items: center; gap: 15px;">
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Leads entrantes</span>
+                                    <strong id="master-leads-count" style="font-size: 1.2rem; color: white;">0</strong>
+                                </div>
+                                <div style="width: 1px; height: 30px; background: #444;"></div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Volume de repasse</span>
+                                    <strong id="master-repasse-count" style="font-size: 1.2rem; color: var(--cvc-neon-yellow);">0</strong>
+                                </div>
+                                <div style="width: 1px; height: 30px; background: #444;"></div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam Repassar</span>
+                                    <strong id="master-leads-faltam" style="font-size: 1.2rem; color: var(--v4-neon-red);">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
                 </div>
             </div>
             
@@ -251,6 +277,7 @@
         
         let STRUCT_LIVE_DATA = []; 
         let CURRENT_FILTERED_LEADS = []; // Guarda os leads filtrados
+        window.masterRepasseCounts = {}; // Guarda a contagem global de repasses por master
         
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
@@ -362,6 +389,9 @@
             const repasseWithHeader = [RAW_REPASSE_HEADER, ...filteredRepasse];
             renderRepasseTable(repasseWithHeader);
             updateRepasseChart(repasseWithHeader);
+            
+            // Recalcula o saldo ao mudar a data
+            calcularMetaMaster();
         }
 
         async function fetchData() {
@@ -488,6 +518,44 @@
             for (let i = 0; i < tr.length; i++) {
                 let txtValue = tr[i].textContent || tr[i].innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) tr[i].style.display = ""; else tr[i].style.display = "none";
+            }
+        }
+
+        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE ---
+        function calcularMetaMaster() {
+            const masterSelect = document.getElementById('master-select');
+            const masterName = masterSelect.value;
+            
+            let leadsCount = 0;
+            let repasseCount = 0;
+            
+            // 1. Conta os leads na aba de Acompanhamento (Leads que Entraram)
+            if (masterName && window.CURRENT_FILTERED_LEADS) {
+                leadsCount = window.CURRENT_FILTERED_LEADS.filter(l => l.master === masterName).length;
+            }
+            
+            // 2. Conta os leads já repassados (da Planilha Repasse)
+            if (masterName && window.masterRepasseCounts) {
+                repasseCount = window.masterRepasseCounts[masterName] || 0;
+            }
+            
+            // Atualiza os painéis
+            document.getElementById('master-leads-count').innerText = leadsCount;
+            document.getElementById('master-repasse-count').innerText = repasseCount;
+            
+            const faltam = leadsCount - repasseCount;
+            const labelFaltam = document.getElementById('master-leads-faltam');
+            
+            if (faltam > 0) {
+                labelFaltam.innerText = faltam;
+                labelFaltam.style.color = 'var(--v4-neon-red)';
+            } else if (faltam < 0) {
+                 // Significa que tem mais no repasse do que na tabela original
+                labelFaltam.innerText = "0 (Sobra: " + Math.abs(faltam) + ")";
+                labelFaltam.style.color = 'var(--status-green)';
+            } else {
+                labelFaltam.innerText = "0";
+                labelFaltam.style.color = 'var(--status-green)';
             }
         }
 
@@ -679,8 +747,8 @@
                 data: { 
                     labels: [], 
                     datasets: [
-                        { label: 'Leads Entraram (Acomp.)', data: [], backgroundColor: '#ffd700', borderRadius: 4 },
-                        { label: 'Já na Planilha de Repasse', data: [], backgroundColor: '#ff1f2d', borderRadius: 4 }
+                        { label: 'Leads entrantes', data: [], backgroundColor: '#ffd700', borderRadius: 4 },
+                        { label: 'Volume de repasse', data: [], backgroundColor: '#ff1f2d', borderRadius: 4 }
                     ] 
                 },
                 options: { 
@@ -713,4 +781,3 @@
     </script>
 </body>
 </html>
-

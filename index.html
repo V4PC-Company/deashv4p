@@ -167,18 +167,20 @@
                                     <option value="">Selecione...</option>
                                 </select>
                             </div>
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 5px;">Meta de Repasse (Qtd)</label>
-                                <input type="number" id="master-meta" class="login-input" style="margin-bottom: 0; width: 150px; padding: 10px;" placeholder="Ex: 50" onkeyup="calcularMetaMaster()" onchange="calcularMetaMaster()">
-                            </div>
+                            
                             <div style="background: var(--bg-tertiary); padding: 10px 20px; border-radius: 12px; border: 1px solid #333; display: flex; align-items: center; gap: 15px;">
                                 <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Leads Entraram</span>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Leads Entraram (Acomp.)</span>
                                     <strong id="master-leads-count" style="font-size: 1.2rem; color: white;">0</strong>
                                 </div>
                                 <div style="width: 1px; height: 30px; background: #444;"></div>
                                 <div>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam</span>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Já na Planilha de Repasse</span>
+                                    <strong id="master-repasse-count" style="font-size: 1.2rem; color: var(--cvc-neon-yellow);">0</strong>
+                                </div>
+                                <div style="width: 1px; height: 30px; background: #444;"></div>
+                                <div>
+                                    <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">Faltam Repassar</span>
                                     <strong id="master-leads-faltam" style="font-size: 1.2rem; color: var(--v4-neon-red);">0</strong>
                                 </div>
                             </div>
@@ -260,7 +262,7 @@
 
         const COORDENADAS = { "sao paulo": [-23.5505, -46.6333], "sp": [-23.5505, -46.6333], "rio de janeiro": [-22.9068, -43.1729], "rj": [-22.9068, -43.1729], "belo horizonte": [-19.9167, -43.9345], "bh": [-19.9167, -43.9345], "brasilia": [-15.7975, -47.8919], "df": [-15.7975, -47.8919], "salvador": [-12.9777, -38.5016], "ba": [-12.9777, -38.5016], "fortaleza": [-3.7172, -38.5434], "ce": [-3.7172, -38.5434], "curitiba": [-25.4284, -49.2733], "pr": [-25.4284, -49.2733], "manaus": [-3.1190, -60.0217], "am": [-3.1190, -60.0217], "recife": [-8.0476, -34.8770], "pe": [-8.0476, -34.8770], "porto alegre": [-30.0346, -51.2177], "rs": [-30.0346, -51.2177], "goiania": [-16.6869, -49.2648], "go": [-16.6869, -49.2648], "belem": [-1.4558, -48.4902], "pa": [-1.4558, -48.4902], "guarulhos": [-23.4515, -46.5333], "campinas": [-22.9099, -47.0626], "sao luis": [-2.5307, -44.3068], "ma": [-2.5307, -44.3068], "sao goncalo": [-22.8275, -43.0631], "maceio": [-9.6662, -35.7351], "al": [-9.6662, -35.7351], "duque de caxias": [-22.7923, -43.3108], "campo grande": [-20.4697, -54.6201], "ms": [-20.4697, -54.6201], "natal": [-5.7945, -35.2110], "rn": [-5.7945, -35.2110], "teresina": [-5.0919, -42.8034], "pi": [-5.0919, -42.8034], "sao bernardo do campo": [-23.6914, -46.5646], "joao pessoa": [-7.1195, -34.8450], "pb": [-7.1195, -34.8450], "nova iguacu": [-22.7561, -43.4607], "santo andre": [-23.6638, -46.5383], "osasco": [-23.5336, -46.7920], "sao jose dos campos": [-23.2237, -45.9009], "sjc": [-23.2237, -45.9009], "jaboatao dos guararapes": [-8.1782, -35.0354], "ribeirao preto": [-21.1704, -47.8103], "uberlandia": [-18.9113, -48.2622], "contagem": [-19.9326, -44.0538], "sorocaba": [-23.5015, -47.4521], "aracaju": [-10.9472, -37.0731], "se": [-10.9472, -37.0731], "cuiaba": [-15.6014, -56.0979], "mt": [-15.6014, -56.0979], "vitoria": [-20.3155, -40.3128], "es": [-20.3155, -40.3128], "juiz de fora": [-21.7661, -43.3503], "londrina": [-23.3045, -51.1696], "niteroi": [-22.8808, -43.1043], "florianopolis": [-27.5954, -48.5480], "sc": [-27.5954, -48.5480], "palmeira dos indios": [-9.4079, -36.6322], "juazeiro do norte": [-7.2372, -39.3222] };
 
-        // LISTA ESTRITA DE MASTERS PERMITIDOS
+        // LISTA ESTRITA DE MASTERS PERMITIDOS (Para busca inteligente nas tabelas)
         const ALLOWED_MASTERS = [
             "ALESSANDRO CANALI", "CLAUDIO VILA NOVA", "CVC CAMPINAS", "CVC CE", 
             "CVC INTERIOR", "CVC MATRIZ", "DIRAN GUTIERREZ", "HELIO AUGUSTO SILVA JUNIOR", 
@@ -274,7 +276,8 @@
         let RAW_REPASSE_HEADER = [];
         
         let STRUCT_LIVE_DATA = []; 
-        let CURRENT_FILTERED_LEADS = []; // Guarda os leads filtrados para o cálculo da meta
+        let CURRENT_FILTERED_LEADS = []; // Guarda os leads filtrados
+        window.masterRepasseCounts = {}; // Guarda a contagem global de repasses por master
         
         let chartQualidade, chartCidades, chartReuniao, chartLive, chartLeadsTimeline, chartLivesTimeline, chartRepasseOverview, map;
 
@@ -333,7 +336,12 @@
         function populateMonthFilter() {
             const months = new Set();
             RAW_LEADS.forEach(l => { const my = getMonthYearFromDate(l.data); if(my && my >= '2026-01') months.add(my); });
-            RAW_REPASSE.forEach(r => { const my = getMonthYearFromDate(r[0]); if(my && my >= '2026-01') months.add(my); });
+            
+            // Opcional: puxar data do repasse também (se a planilha tiver coluna de data na pos 0)
+            if(RAW_REPASSE.length > 0 && RAW_REPASSE[0][0]) {
+                RAW_REPASSE.forEach(r => { const my = getMonthYearFromDate(r[0]); if(my && my >= '2026-01') months.add(my); });
+            }
+
             STRUCT_LIVE_DATA.forEach(item => { const my = getMonthYearFromDate(item.date); if(my && my >= '2026-01') months.add(my); });
 
             const sortedMonths = Array.from(months).sort().reverse(); 
@@ -355,7 +363,10 @@
             if(selected !== 'all') filteredLeads = RAW_LEADS.filter(l => getMonthYearFromDate(l.data) === selected);
 
             let filteredRepasse = RAW_REPASSE;
-            if(selected !== 'all') filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
+            // Se a planilha de repasse tiver datas na coluna 0, filtra também
+            if(selected !== 'all' && RAW_REPASSE.length > 0 && RAW_REPASSE[0][0] && RAW_REPASSE[0][0].includes('/')) {
+                filteredRepasse = RAW_REPASSE.filter(r => getMonthYearFromDate(r[0]) === selected);
+            }
 
             let filteredLiveStats = { presente: 0, ausente: 0, agendado: 0 };
             let filteredLiveTimeline = {};
@@ -379,7 +390,7 @@
             renderRepasseTable(repasseWithHeader);
             updateRepasseChart(repasseWithHeader);
             
-            // Recalcula ao mudar a data
+            // Recalcula o saldo ao mudar a data
             calcularMetaMaster();
         }
 
@@ -392,8 +403,11 @@
                 ]);
 
                 const rowsRepasse = parseCSV(resRepasse);
-                RAW_REPASSE_HEADER = rowsRepasse[0];
-                RAW_REPASSE = rowsRepasse.slice(1); 
+                // Evita problemas de repasse sem cabeçalho 
+                if(rowsRepasse.length > 0) {
+                     RAW_REPASSE_HEADER = rowsRepasse[0];
+                     RAW_REPASSE = rowsRepasse.slice(1); 
+                }
 
                 const rowsLeads = parseCSV(resLeads);
                 const headers = rowsLeads[0].map(h => h.toUpperCase().trim());
@@ -403,8 +417,6 @@
                     NOME: headers.findIndex(h => h.includes("NOME")),
                     STATUS_CVC: headers.findIndex(h => h.includes("STATUS COM A CVC") || h === "STATUS"),
                     CIDADE: headers.findIndex(h => h.includes("CIDADE")),
-                    // Mapeia inteligentemente onde o nome do Gerente/Master está salvo na planilha de LEADS
-                    MASTER_LEADS: headers.findIndex(h => h.includes("GERENTE") || h.includes("MASTER") || h.includes("FRANQUEADO") || h.includes("RESPONSÁVEL")),
                     STATUS_K: 11, 
                     STATUS_COLS: []
                 };
@@ -439,8 +451,16 @@
                     const rawName = (cols[IDX.NOME] || "Sem Nome").trim();
                     const rawCity = cols[IDX.CIDADE] || "";
                     
-                    // Extrai e formata o nome do Master para facilitar a busca
-                    const rawMaster = IDX.MASTER_LEADS !== -1 ? (cols[IDX.MASTER_LEADS] || "") : "";
+                    // Busca inteligente do nome do Master varrendo a linha inteira da planilha Acompanhamento
+                    let foundMaster = "";
+                    for(let cell of cols) {
+                        let upperCell = normalizeString(cell);
+                        let matched = ALLOWED_MASTERS.find(m => upperCell.includes(normalizeString(m)));
+                        if(matched) {
+                            foundMaster = matched;
+                            break;
+                        }
+                    }
                     
                     return { 
                         data: cols[IDX.DATA],
@@ -449,7 +469,7 @@
                         status: finalStatus, 
                         statusK: statusK,
                         statusCVC: statusCVCValue,
-                        master: normalizeString(rawMaster) // Master extraído da planilha de leads
+                        master: foundMaster
                     };
                 }).filter(i => i !== null);
 
@@ -478,6 +498,9 @@
         function renderRepasseTable(data) {
             const tableHead = document.querySelector("#tabela-repasse thead");
             const tableBody = document.querySelector("#tabela-repasse tbody");
+            
+            if(data.length === 0 || !data[0]) return;
+            
             const headers = data[0];
             tableHead.innerHTML = `<tr>${headers.map(h => `<th style="padding: 12px; border-bottom: 2px solid #333; color: white;">${h}</th>`).join('')}</tr>`;
             tableBody.innerHTML = data.slice(1).map(row => {
@@ -498,64 +521,70 @@
             }
         }
 
-        // --- CÁLCULO DE META: Buscando da Planilha Principal de Leads ---
+        // --- CÁLCULO AUTOMÁTICO DE SALDOS DE REPASSE ---
         function calcularMetaMaster() {
             const masterSelect = document.getElementById('master-select');
-            const masterName = normalizeString(masterSelect.value);
-            const meta = parseInt(document.getElementById('master-meta').value) || 0;
+            const masterName = masterSelect.value;
             
-            let count = 0;
+            let leadsCount = 0;
+            let repasseCount = 0;
             
-            // Conta os leads diretamente na aba de Acompanhamento (CURRENT_FILTERED_LEADS)
-            if (masterName && masterName !== "N/D" && window.CURRENT_FILTERED_LEADS) {
-                count = window.CURRENT_FILTERED_LEADS.filter(l => {
-                    if (!l.master) return false;
-                    // Faz a verificação estrita para garantir correspondência com a lista
-                    return l.master.includes(masterName) || masterName.includes(l.master);
-                }).length;
+            // 1. Conta os leads na aba de Acompanhamento (Leads que Entraram)
+            if (masterName && window.CURRENT_FILTERED_LEADS) {
+                leadsCount = window.CURRENT_FILTERED_LEADS.filter(l => l.master === masterName).length;
             }
             
-            document.getElementById('master-leads-count').innerText = count;
+            // 2. Conta os leads já repassados (da Planilha Repasse)
+            if (masterName && window.masterRepasseCounts) {
+                repasseCount = window.masterRepasseCounts[masterName] || 0;
+            }
             
-            const faltam = meta - count;
+            // Atualiza os painéis
+            document.getElementById('master-leads-count').innerText = leadsCount;
+            document.getElementById('master-repasse-count').innerText = repasseCount;
+            
+            const faltam = leadsCount - repasseCount;
             const labelFaltam = document.getElementById('master-leads-faltam');
             
             if (faltam > 0) {
                 labelFaltam.innerText = faltam;
                 labelFaltam.style.color = 'var(--v4-neon-red)';
-            } else if (meta > 0 && faltam <= 0) {
-                labelFaltam.innerText = "Meta Batida!";
+            } else if (faltam < 0) {
+                 // Significa que tem mais no repasse do que na tabela original
+                labelFaltam.innerText = "0 (Sobra: " + Math.abs(faltam) + ")";
                 labelFaltam.style.color = 'var(--status-green)';
             } else {
                 labelFaltam.innerText = "0";
-                labelFaltam.style.color = 'var(--text-bright)';
+                labelFaltam.style.color = 'var(--status-green)';
             }
         }
 
         function updateRepasseChart(data) {
-            const headers = data[0].map(h => h.toUpperCase().trim());
-            let mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL MASTER FRANQUEADO"));
-            if (mgrIndex === -1) mgrIndex = headers.findIndex(h => h.includes("GERENTE REGIONAL") || h.includes("GERENTE"));
-            if (mgrIndex === -1) mgrIndex = 1; 
-
-            const rows = data.slice(1);
+            const rows = data.slice(1); // Tira o cabeçalho
             
-            // Inicializa a contagem APENAS com os Masters permitidos
+            // Inicia o contador apenas para a lista permitida
             const counts = {};
             ALLOWED_MASTERS.forEach(m => counts[m] = 0);
 
+            // Busca inteligente varrendo todas as colunas da Planilha Repasse
             rows.forEach(r => {
-                if(!r[0]) return;
-                const rawName = r[mgrIndex] ? r[mgrIndex].toUpperCase().trim() : "";
-                
-                // Tenta encontrar o nome do Master na nossa lista "limpa" e segura
-                const matchedMaster = ALLOWED_MASTERS.find(m => rawName.includes(m) || m.includes(rawName));
-                if (matchedMaster && rawName !== "") {
-                    counts[matchedMaster]++;
+                for(let cell of r) {
+                    if(!cell) continue;
+                    let upperCell = normalizeString(cell);
+                    
+                    // Tenta achar um match exato da nossa lista
+                    let matchedMaster = ALLOWED_MASTERS.find(m => upperCell.includes(normalizeString(m)));
+                    if (matchedMaster) {
+                        counts[matchedMaster]++;
+                        break; // Achou o master nessa linha, não precisa procurar mais
+                    }
                 }
             });
 
-            // Filtra e ordena para mostrar no gráfico (apenas os que tiverem contagem maior que 0)
+            // Guarda para a calculadora de metas
+            window.masterRepasseCounts = counts;
+
+            // Filtra o array para o gráfico (ignora quem tem 0 repasses e ordena do maior pro menor)
             const sorted = Object.entries(counts)
                 .filter(i => i[1] > 0) 
                 .sort((a,b) => b[1] - a[1])
@@ -565,7 +594,7 @@
             chartRepasseOverview.data.datasets[0].data = sorted.map(i => i[1]);
             chartRepasseOverview.update();
 
-            // POPULA O SELECT EXCLUSIVAMENTE COM OS MASTERS PERMITIDOS
+            // Popula o select exclusivamente com os Masters
             const masterSelect = document.getElementById('master-select');
             const currentVal = masterSelect.value;
             masterSelect.innerHTML = '<option value="">Selecione...</option>';
@@ -577,12 +606,11 @@
                 masterSelect.appendChild(opt);
             });
             
-            // Mantém a seleção se for válida
             if (ALLOWED_MASTERS.includes(currentVal)) {
                 masterSelect.value = currentVal;
             }
             
-            // Aciona o cálculo para atualizar caso a data tenha mudado
+            // Recalcula as metas logo depois de gerar a lista
             calcularMetaMaster();
         }
 

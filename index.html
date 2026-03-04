@@ -341,14 +341,33 @@
 
         function parseCSV(text) {
             const lines = text.split('\n');
+            if (lines.length === 0) return [];
+            
+            // Descobre qual é o separador do CSV (vírgula ou ponto e vírgula)
             const separator = (lines[0].match(/;/g)||[]).length > (lines[0].match(/,/g)||[]).length ? ';' : ',';
             const result = [];
-            for(let i=0; i<lines.length; i++) {
-                if(!lines[i].trim()) continue;
-                const regex = new RegExp(`(?:${separator}|\\r?\\n|^)(?:"([^"]*)"|([^"${separator}\\r\\n]*))`, 'gi');
-                const row = [];
-                let matches;
-                while((matches = regex.exec(lines[i]))) row.push(matches[1] || matches[2] || ''.trim());
+
+            for(let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                if(!line) continue;
+                
+                let row = [];
+                let inQuotes = false;
+                let currentValue = "";
+                
+                // Varredura segura caractere por caractere (evita loop infinito)
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') {
+                        inQuotes = !inQuotes; // Entra ou sai das aspas
+                    } else if (char === separator && !inQuotes) {
+                        row.push(currentValue.trim()); // Salva a célula e pula pro próximo
+                        currentValue = "";
+                    } else {
+                        currentValue += char;
+                    }
+                }
+                row.push(currentValue.trim()); // Empurra a última célula da linha
                 result.push(row);
             }
             return result;
